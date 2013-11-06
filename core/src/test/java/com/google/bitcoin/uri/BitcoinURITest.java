@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class BitcoinURITest {
     private BitcoinURI testObject = null;
 
-    private static final String MAINNET_GOOD_ADDRESS = "1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH";
+    private static final String MAINNET_GOOD_ADDRESS = "LQz2pJYaeqntA9BFB8rDX5AL2TTKGd5AuN";
 
     @Test
     public void testConvertToBitcoinURI() throws Exception {
@@ -240,7 +240,7 @@ public class BitcoinURITest {
         testObject = new BitcoinURI(MainNetParams.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS
                 + "?amount=6543210&label=Hello%20World&message=Be%20well");
         assertEquals(
-                "BitcoinURI['address'='1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH','amount'='654321000000000','label'='Hello World','message'='Be well']",
+                "BitcoinURI['address'='LQz2pJYaeqntA9BFB8rDX5AL2TTKGd5AuN','amount'='654321000000000','label'='Hello World','message'='Be well']",
                 testObject.toString());
     }
 
@@ -367,7 +367,7 @@ public class BitcoinURITest {
         // Unknown not required field
         testObject = new BitcoinURI(MainNetParams.get(), BitcoinURI.BITCOIN_SCHEME + ":" + MAINNET_GOOD_ADDRESS
                 + "?aardvark=true");
-        assertEquals("BitcoinURI['address'='1KzTSfqjF2iKCduwz59nv2uqh1W2JsTxZH','aardvark'='true']", testObject.toString());
+        assertEquals("BitcoinURI['address'='LQz2pJYaeqntA9BFB8rDX5AL2TTKGd5AuN','aardvark'='true']", testObject.toString());
 
         assertEquals("true", (String) testObject.getParameterByName("aardvark"));
 
