@@ -30,36 +30,40 @@ public class MainNetParams extends NetworkParameters {
         super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
-        proofOfWorkLimit = Utils.decodeCompactBits(0x1d00ffffL);
-        acceptableAddressCodes = new int[] { 0 };
+        proofOfWorkLimit = Utils.decodeCompactBits(0x1e0ffff0L);
+        acceptableAddressCodes = new int[] { 48 };
         dumpedPrivateKeyHeader = 128;
-        addressHeader = 0;
-        port = 8333;
-        packetMagic = 0xf9beb4d9L;
-        genesisBlock.setDifficultyTarget(0x1d00ffffL);
-        genesisBlock.setTime(1231006505L);
-        genesisBlock.setNonce(2083236893);
+        addressHeader = 48;
+        port = 9333;
+        packetMagic = 0xfbc0b6dbL;
+        genesisBlock.setDifficultyTarget(0x1e0ffff0L);
+        genesisBlock.setTime(1317972665L);
+        genesisBlock.setNonce(2084524493L);
+        genesisBlock.setMerkleRoot(new Sha256Hash("97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9"));
         id = ID_MAINNET;
-        subsidyDecreaseBlockCount = 210000;
+        subsidyDecreaseBlockCount = 840000;
         spendableCoinbaseDepth = 100;
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
+        LOGGER.info("Genesis Hash: " + genesisHash.toString());
+        checkState(genesisHash.equals("12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2"),
                 genesisHash);
 
         // This contains (at a minimum) the blocks which are not BIP30 compliant. BIP30 changed how duplicate
         // transactions are handled. Duplicated transactions could occur in the case where a coinbase had the same
         // extraNonce and the same outputs but appeared at different heights, and greatly complicated re-org handling.
         // Having these here simplifies block connection logic considerably.
+        /*
         checkpoints.put(91722, new Sha256Hash("00000000000271a2dc26e7667f8419f2e15416dc6955e5a6c6cdf3f2574dd08e"));
         checkpoints.put(91812, new Sha256Hash("00000000000af0aed4792b1acee3d966af36cf5def14935db8de83d6f9306f2f"));
         checkpoints.put(91842, new Sha256Hash("00000000000a4d0a398161ffc163c503763b1f4360639393e0e4c8e300e0caec"));
         checkpoints.put(91880, new Sha256Hash("00000000000743f190a18c5577a3c2d2a1f610ae9601ac046a38084ccb7cd721"));
         checkpoints.put(200000, new Sha256Hash("000000000000034a7dedef4a161fa058a2d67a173a90155f3a2fe6fc132e0ebf"));
+        */
 
         dnsSeeds = new String[] {
-                "seed.bitcoin.sipa.be",        // Pieter Wuille
-                "dnsseed.bluematt.me",         // Matt Corallo
-                "dnsseed.bitcoin.dashjr.org",  // Luke Dashjr
+                "dnsseed.litecoinpool.org",
+                "dnsseed.bytesized-vps.com",
+                "dnsseed.ltc.xurious.com",
         };
     }
 

@@ -37,6 +37,7 @@ import java.util.List;
 
 import static com.google.bitcoin.core.Utils.doubleDigest;
 import static com.google.bitcoin.core.Utils.doubleDigestTwoBuffers;
+import static com.google.bitcoin.core.Utils.scryptDigest;
 
 /**
  * <p>A block is a group of transactions, and is one of the fundamental data structures of the Bitcoin system.
@@ -86,6 +87,8 @@ public class Block extends Message {
 
     /** Stores the hash of the block. If null, getHash() will recalculate it. */
     private transient Sha256Hash hash;
+    private transient Sha256Hash scryptHash;
+
 
     private transient boolean headerParsed;
     private transient boolean transactionsParsed;
@@ -508,6 +511,17 @@ public class Block extends Message {
             throw new RuntimeException(e); // Cannot happen.
         }
     }
+    private Sha256Hash calculateScryptHash() {
+
+        try {
+            ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(HEADER_SIZE);
+            writeHeader(bos);
+            return new Sha256Hash(Utils.reverseBytes(scryptDigest(bos.toByteArray())));
+        } catch (IOException e) {
+            throw new RuntimeException(e); // Cannot happen.
+        }
+
+    }
 
     /**
      * Returns the hash of the block (which for a valid, solved block should be below the target) in the form seen on
@@ -517,7 +531,9 @@ public class Block extends Message {
     public String getHashAsString() {
         return getHash().toString();
     }
-
+    public String getScryptHashAsString() {
+        return getScryptHash().toString();
+    }
     /**
      * Returns the hash of the block (which for a valid, solved block should be
      * below the target). Big endian.
@@ -527,7 +543,11 @@ public class Block extends Message {
             hash = calculateHash();
         return hash;
     }
-
+    public Sha256Hash getScryptHash() {
+        if (hash == null)
+            hash = calculateScryptHash();
+        return hash;
+    }
     /**
      * The number that is one greater than the largest representable SHA-256
      * hash.
@@ -628,7 +648,7 @@ public class Block extends Message {
         maybeParseHeader();
         BigInteger target = Utils.decodeCompactBits(difficultyTarget);
         if (target.compareTo(BigInteger.ZERO) <= 0 || target.compareTo(params.proofOfWorkLimit) > 0)
-            throw new VerificationException("Difficulty target is bad: " + target.toString());
+          throw new VerificationException("Difficulty target is bad: " + target.toString() + " or " + difficultyTarget);
         return target;
     }
 
@@ -644,11 +664,11 @@ public class Block extends Message {
         // field is of the right value. This requires us to have the preceeding blocks.
         BigInteger target = getDifficultyTargetAsInteger();
 
-        BigInteger h = getHash().toBigInteger();
+        BigInteger h = getScryptHash().toBigInteger();
         if (h.compareTo(target) > 0) {
             // Proof of work check failed!
             if (throwException)
-                throw new VerificationException("Hash is higher than target: " + getHashAsString() + " vs "
+                throw new VerificationException("Hash is higher than target: " + getScryptHashAsString() + " vs "
                         + target.toString(16));
             else
                 return false;
@@ -831,8 +851,7 @@ public class Block extends Message {
         return merkleRoot;
     }
 
-    /** Exists only for unit testing. */
-    void setMerkleRoot(Sha256Hash value) {
+    public void setMerkleRoot(Sha256Hash value) {
         unCacheHeader();
         merkleRoot = value;
         hash = null;

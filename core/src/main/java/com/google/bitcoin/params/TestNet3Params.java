@@ -20,6 +20,8 @@ import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Utils;
 import org.spongycastle.util.encoders.Hex;
 
+import java.util.logging.Logger;
+
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -30,22 +32,22 @@ public class TestNet3Params extends NetworkParameters {
     public TestNet3Params() {
         super();
         id = ID_TESTNET;
-        // Genesis hash is 000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943
-        packetMagic = 0x0b110907;
+        packetMagic = 0xfcc1b7dc;
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
-        proofOfWorkLimit = Utils.decodeCompactBits(0x1d00ffffL);
-        port = 18333;
+        proofOfWorkLimit = Utils.decodeCompactBits(0x1e0ffff0L);
+        port = 19333;
         addressHeader = 111;
         acceptableAddressCodes = new int[] { 111 };
         dumpedPrivateKeyHeader = 239;
-        genesisBlock.setTime(1296688602L);
-        genesisBlock.setDifficultyTarget(0x1d00ffffL);
-        genesisBlock.setNonce(414098458);
+        genesisBlock.setTime(1320884152L);
+        genesisBlock.setDifficultyTarget(0x1d018ea7L);
+        genesisBlock.setNonce(3562614017L);
         spendableCoinbaseDepth = 100;
-        subsidyDecreaseBlockCount = 210000;
+        subsidyDecreaseBlockCount = 840000;
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
+        LOGGER.info("Genesis Hash: " + genesisHash.toString());
+        checkState(genesisHash.equals("54477b4910d7f39fb05db75ece889d1fd690c4357b00268a54e7239f757b5d6c"));
         alertSigningKey = Hex.decode("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
 
         dnsSeeds = new String[] {

@@ -36,7 +36,7 @@ public class AddressTest {
         assertEquals("n4eA2nbYqErp7H6jebchxAN59DmNpksexv", a.toString());
 
         Address b = new Address(mainParams, Hex.decode("4a22c3c4cbb31e4d03b15550636762bda0baf85a"));
-        assertEquals("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL", b.toString());
+        assertEquals("LRywuuNCDLJCX4cnQ8RxQQoLbtM5FRsgto", b.toString());
     }
     
     @Test
@@ -44,8 +44,8 @@ public class AddressTest {
         Address a = new Address(testParams, "n4eA2nbYqErp7H6jebchxAN59DmNpksexv");
         assertEquals("fda79a24e50ff70ff42f7d89585da5bd19d9e5cc", Utils.bytesToHexString(a.getHash160()));
 
-        Address b = new Address(mainParams, "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
-        assertEquals("4a22c3c4cbb31e4d03b15550636762bda0baf85a", Utils.bytesToHexString(b.getHash160()));
+        Address b = new Address(mainParams, "LNLKaBheR1M5HACRu8gmjXxCjkPPVHxGW5");
+        assertEquals("221ca965650a603b911b930fb9fb4b9b475c40b0", Utils.bytesToHexString(b.getHash160()));
     }
     
     @Test
@@ -72,7 +72,7 @@ public class AddressTest {
 
         // Check the case of a mismatched network.
         try {
-            new Address(testParams, "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
+            new Address(testParams, "LNLKaBheR1M5HACRu8gmjXxCjkPPVHxGW5");
             fail();
         } catch (WrongNetworkException e) {
             // Success.
@@ -85,7 +85,8 @@ public class AddressTest {
     
     @Test
     public void getNetwork() throws Exception {
-        NetworkParameters params = Address.getParametersFromAddress("17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL");
+        NetworkParameters params = Address.getParametersFromAddress("LNLKaBheR1M5HACRu8gmjXxCjkPPVHxGW5");
+        assertNotNull(params);
         assertEquals(MainNetParams.get().getId(), params.getId());
         params = Address.getParametersFromAddress("n4eA2nbYqErp7H6jebchxAN59DmNpksexv");
         assertEquals(TestNet3Params.get().getId(), params.getId());

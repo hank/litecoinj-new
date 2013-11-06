@@ -29,21 +29,22 @@ public class TestNet2Params extends NetworkParameters {
     public TestNet2Params() {
         super();
         id = ID_TESTNET;
-        packetMagic = 0xfabfb5daL;
-        port = 18333;
+        packetMagic = 0xfcc1b7dc;
+        port = 19333;
         addressHeader = 111;
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         proofOfWorkLimit = Utils.decodeCompactBits(0x1d0fffffL);
         acceptableAddressCodes = new int[] { 111 };
         dumpedPrivateKeyHeader = 239;
-        genesisBlock.setTime(1296688602L);
-        genesisBlock.setDifficultyTarget(0x1d07fff8L);
-        genesisBlock.setNonce(384568319);
+        genesisBlock.setTime(1320884152L);
+        genesisBlock.setDifficultyTarget(0x1d018ea7L);
+        genesisBlock.setNonce(3562614017L);
         spendableCoinbaseDepth = 100;
-        subsidyDecreaseBlockCount = 210000;
+        subsidyDecreaseBlockCount = 840000;
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("00000007199508e34a9ff81e6ec0c477a4cccff2a4767a8eee39c11db367b008"));
+        LOGGER.info("Genesis Hash: " + genesisHash.toString());
+        checkState(genesisHash.equals("54477b4910d7f39fb05db75ece889d1fd690c4357b00268a54e7239f757b5d6c"));
         dnsSeeds = null;
     }
 
