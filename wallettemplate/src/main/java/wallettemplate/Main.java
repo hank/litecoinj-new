@@ -1,13 +1,13 @@
 package wallettemplate;
 
 import com.aquafx_project.AquaFx;
-import com.google.bitcoin.core.NetworkParameters;
-import com.google.bitcoin.kits.WalletAppKit;
-import com.google.bitcoin.params.MainNetParams;
-import com.google.bitcoin.params.RegTestParams;
-import com.google.bitcoin.store.BlockStoreException;
-import com.google.bitcoin.utils.BriefLogFormatter;
-import com.google.bitcoin.utils.Threading;
+import com.google.litecoin.core.NetworkParameters;
+import com.google.litecoin.kits.WalletAppKit;
+import com.google.litecoin.params.MainNetParams;
+import com.google.litecoin.params.RegTestParams;
+import com.google.litecoin.store.BlockStoreException;
+import com.google.litecoin.utils.BriefLogFormatter;
+import com.google.litecoin.utils.Threading;
 import com.google.common.base.Throwables;
 import javafx.application.Application;
 import javafx.application.Platform;

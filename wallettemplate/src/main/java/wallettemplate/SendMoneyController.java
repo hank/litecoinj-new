@@ -1,6 +1,6 @@
 package wallettemplate;
 
-import com.google.bitcoin.core.*;
+import com.google.litecoin.core.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import javafx.application.Platform;
