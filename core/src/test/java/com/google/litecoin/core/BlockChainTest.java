@@ -213,7 +213,7 @@ public class BlockChainTest {
         // Nonce was just some number that made the hash < difficulty limit set below, it can be anything.
         bad.setNonce(140548933);
         bad.setTime(1279242649);
-        bad.setPrevBlockHash(b2.getHash());
+        bad.setPrevBlockHash(b2.getScryptHash());
         // We're going to make this block so easy 50% of solutions will pass, and check it gets rejected for having a
         // bad difficulty target. Unfortunately the encoding mechanism means we cannot make one that accepts all
         // solutions.
@@ -380,7 +380,7 @@ public class BlockChainTest {
         b1.setNonce(236038445);
         b1.setTime(1296734340);
         b1.setPrevBlockHash(new Sha256Hash("00000007199508e34a9ff81e6ec0c477a4cccff2a4767a8eee39c11db367b008"));
-        assertEquals("000000033cc282bc1fa9dcae7a533263fd7fe66490f550d80076433340831604", b1.getHashAsString());
+        assertEquals("33004af7b70f4ffd5224b96989567022898f3712e86b28f4acf74b22b6cfc74b", b1.getScryptHashAsString());
         b1.verifyHeader();
         return b1;
     }

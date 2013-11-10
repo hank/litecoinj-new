@@ -52,7 +52,7 @@ public class SPVBlockStoreTest {
 
         // Check we can get it back out again if we rebuild the store object.
         store = new SPVBlockStore(params, f);
-        StoredBlock b2 = store.get(b1.getHeader().getHash());
+        StoredBlock b2 = store.get(b1.getHeader().getScryptHash());
         assertEquals(b1, b2);
         // Check the chain head was stored correctly also.
         StoredBlock chainHead = store.getChainHead();

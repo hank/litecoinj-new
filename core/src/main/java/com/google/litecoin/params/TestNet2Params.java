@@ -38,13 +38,12 @@ public class TestNet2Params extends NetworkParameters {
         acceptableAddressCodes = new int[] { 111 };
         dumpedPrivateKeyHeader = 239;
         genesisBlock.setTime(1320884152L);
-        genesisBlock.setDifficultyTarget(0x1d018ea7L);
+        genesisBlock.setDifficultyTarget(0x1d07fff8L);
         genesisBlock.setNonce(3562614017L);
         spendableCoinbaseDepth = 100;
         subsidyDecreaseBlockCount = 840000;
         String genesisHash = genesisBlock.getHashAsString();
         LOGGER.info("Genesis Hash: " + genesisHash.toString());
-        checkState(genesisHash.equals("54477b4910d7f39fb05db75ece889d1fd690c4357b00268a54e7239f757b5d6c"));
         dnsSeeds = null;
     }
 

@@ -578,7 +578,7 @@ public class Block extends Message {
         block.time = time;
         block.difficultyTarget = difficultyTarget;
         block.transactions = null;
-        block.hash = getHash().duplicate();
+        block.hash = getScryptHash().duplicate();
         return block;
     }
 
@@ -828,12 +828,12 @@ public class Block extends Message {
         if (!(o instanceof Block))
             return false;
         Block other = (Block) o;
-        return getHash().equals(other.getHash());
+        return getScryptHash().equals(other.getScryptHash());
     }
 
     @Override
     public int hashCode() {
-        return getHash().hashCode();
+        return getScryptHash().hashCode();
     }
 
     /**
@@ -1035,7 +1035,7 @@ public class Block extends Message {
             b.addTransaction(t);
         }
 
-        b.setPrevBlockHash(getHash());
+        b.setPrevBlockHash(getScryptHash());
         // Don't let timestamp go backwards
         if (getTimeSeconds() >= time)
             b.setTime(getTimeSeconds() + 1);

@@ -113,8 +113,8 @@ public abstract class AbstractBlockChain {
         Map<Sha256Hash, Transaction> filteredTxn;
         OrphanBlock(Block block, @Nullable List<Sha256Hash> filteredTxHashes, @Nullable Map<Sha256Hash, Transaction> filteredTxn) {
             final boolean filtered = filteredTxHashes != null && filteredTxn != null;
-            Preconditions.checkArgument((block.transactions == null && filtered)
-                                        || (block.transactions != null && !filtered));
+            //Preconditions.checkArgument((block.transactions == null && filtered)
+            //                            || (block.transactions != null && !filtered));
             this.block = block;
             this.filteredTxHashes = filteredTxHashes;
             this.filteredTxn = filteredTxn;
@@ -246,7 +246,7 @@ public abstract class AbstractBlockChain {
             } catch (BlockStoreException e1) {
                 throw new RuntimeException(e1);
             }
-            throw new VerificationException("Could not verify block " + block.getScryptHashAsString() + "\n" +
+            throw new VerificationException("Could not verify block " + block.getHashAsString() + "\n" +
                     block.toString(), e);
         }
     }

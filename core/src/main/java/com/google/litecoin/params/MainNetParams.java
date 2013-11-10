@@ -30,13 +30,13 @@ public class MainNetParams extends NetworkParameters {
         super();
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
-        proofOfWorkLimit = Utils.decodeCompactBits(0x1d00ffffL);
+        proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);
         acceptableAddressCodes = new int[] { 48 };
         dumpedPrivateKeyHeader = 128;
         addressHeader = 48;
         port = 9333;
         packetMagic = 0xfbc0b6dbL;
-        genesisBlock.setDifficultyTarget(0x1d00ffffL);
+        genesisBlock.setDifficultyTarget(0x1e0fffffL);
         genesisBlock.setTime(1317972665L);
         genesisBlock.setNonce(2084524493L);
         genesisBlock.setMerkleRoot(new Sha256Hash("97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9"));
