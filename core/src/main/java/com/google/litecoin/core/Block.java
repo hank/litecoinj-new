@@ -102,14 +102,13 @@ public class Block extends Message {
     private transient int optimalEncodingMessageSize;
 
     /** Special case constructor, used for the genesis node, cloneAsHeader and unit tests. */
-    Block(NetworkParameters params) {
+    public Block(NetworkParameters params) {
         super(params);
         // Set up a few basic things. We are not complete after this though.
         version = 1;
         difficultyTarget = 0x1d07fff8L;
         time = System.currentTimeMillis() / 1000;
         prevBlockHash = Sha256Hash.ZERO_HASH;
-
         length = 80;
     }
 
@@ -482,6 +481,7 @@ public class Block extends Message {
         if (!transactionBytesValid)
             bytes = null;
         hash = null;
+        scryptHash = null;
         checksum = null;
     }
 
@@ -542,9 +542,9 @@ public class Block extends Message {
         return hash;
     }
     public Sha256Hash getScryptHash() {
-        if (hash == null)
-            hash = calculateScryptHash();
-        return hash;
+        if (scryptHash == null)
+            scryptHash = calculateScryptHash();
+        return scryptHash;
     }
     /**
      * The number that is one greater than the largest representable SHA-256
@@ -576,7 +576,8 @@ public class Block extends Message {
         block.time = time;
         block.difficultyTarget = difficultyTarget;
         block.transactions = null;
-        block.hash = getScryptHash().duplicate();
+        block.hash = getHash().duplicate();
+        block.scryptHash = getScryptHash().duplicate();
         return block;
     }
 
@@ -853,6 +854,7 @@ public class Block extends Message {
         unCacheHeader();
         merkleRoot = value;
         hash = null;
+        scryptHash = null;
     }
 
     /** Adds a transaction to this block. The nonce and merkle root are invalid after this. */
@@ -876,12 +878,17 @@ public class Block extends Message {
         // Force a recalculation next time the values are needed.
         merkleRoot = null;
         hash = null;
+        scryptHash = null;
     }
 
     /** Returns the version of the block data structure as defined by the Bitcoin protocol. */
     public long getVersion() {
         maybeParseHeader();
         return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     /**

@@ -32,6 +32,7 @@ import org.junit.Test;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import static com.google.litecoin.utils.TestUtils.createFakeBlock;
 import static com.google.litecoin.utils.TestUtils.createFakeTx;
@@ -41,6 +42,7 @@ import static org.junit.Assert.*;
 
 public class BlockChainTest {
     private BlockChain testNetChain;
+    private BlockChain mainNetChain;
 
     private Wallet wallet;
     private BlockChain chain;
@@ -57,6 +59,9 @@ public class BlockChainTest {
     }
     private static final TweakableTestNet2Params testNet = new TweakableTestNet2Params();
 
+    private static final MainNetParams mainNet = new MainNetParams();
+
+
     private void resetBlockStore() {
         blockStore = new MemoryBlockStore(unitTestParams);
     }
@@ -65,6 +70,7 @@ public class BlockChainTest {
     public void setUp() throws Exception {
         BriefLogFormatter.initVerbose();
         testNetChain = new BlockChain(testNet, new Wallet(testNet), new MemoryBlockStore(testNet));
+        mainNetChain = new BlockChain(mainNet, new Wallet(mainNet), new MemoryBlockStore(mainNet));
         Wallet.SendRequest.DEFAULT_FEE_PER_KB = BigInteger.ZERO;
 
         unitTestParams = UnitTestParams.get();
@@ -95,10 +101,10 @@ public class BlockChainTest {
     @Test
     public void testBasicChaining() throws Exception {
         // Check that we can plug a few blocks together and the futures work.
-        ListenableFuture<StoredBlock> future = testNetChain.getHeightFuture(2);
+        ListenableFuture<StoredBlock> future = mainNetChain.getHeightFuture(2);
         // Block 1 from the testnet.
         Block b1 = getBlock1();
-        assertTrue(testNetChain.add(b1));
+        assertTrue(mainNetChain.add(b1));
         assertFalse(future.isDone());
         // Block 2 from the testnet.
         Block b2 = getBlock2();
@@ -106,15 +112,15 @@ public class BlockChainTest {
         // Let's try adding an invalid block.
         long n = b2.getNonce();
         try {
-            b2.setNonce(12345);
-            testNetChain.add(b2);
+            b2.setNonce(12345L);
+            mainNetChain.add(b2);
             fail();
         } catch (VerificationException e) {
             b2.setNonce(n);
         }
 
         // Now it works because we reset the nonce.
-        assertTrue(testNetChain.add(b2));
+        assertTrue(mainNetChain.add(b2));
         assertTrue(future.isDone());
         assertEquals(2, future.get().getHeight());
     }
@@ -213,7 +219,7 @@ public class BlockChainTest {
         // Nonce was just some number that made the hash < difficulty limit set below, it can be anything.
         bad.setNonce(140548933);
         bad.setTime(1279242649);
-        bad.setPrevBlockHash(b2.getScryptHash());
+        bad.setPrevBlockHash(b2.getHash());
         // We're going to make this block so easy 50% of solutions will pass, and check it gets rejected for having a
         // bad difficulty target. Unfortunately the encoding mechanism means we cannot make one that accepts all
         // solutions.
@@ -363,24 +369,38 @@ public class BlockChainTest {
     }
 
     // Some blocks from the test net.
-    private static Block getBlock2() throws Exception {
-        Block b2 = new Block(testNet);
-        b2.setMerkleRoot(new Sha256Hash("addc858a17e21e68350f968ccd384d6439b64aafa6c193c8b9dd66320470838b"));
-        b2.setNonce(2642058077L);
-        b2.setTime(1296734343L);
-        b2.setPrevBlockHash(new Sha256Hash("000000033cc282bc1fa9dcae7a533263fd7fe66490f550d80076433340831604"));
-        assertEquals("000000037b21cac5d30fc6fda2581cf7b2612908aed2abbcc429c45b0557a15f", b2.getHashAsString());
+    private static Block getBlock1() throws Exception {
+        Block b2 = new Block(mainNet);
+        /*
+        Could not verify block 2bc84fcd2c8b77264eba1a39516de8f4072d78d2e73d145ef6735e67fd3bc456
+        v2 block:
+        previous block: b8f534c4a2682f8d5ee37a6fc7ec1ff185a133774b971d9058c4d6e9a7a81311
+        merkle root: 2c57e1409f9896989efbb5a3f352a38424b34f3a4dd68f1faadd46a1fff1196f
+        time: [1377809916] Thu Aug 29 16:58:36 EDT 2013
+        difficulty target (nBits): 457579461
+        nonce: 1617239040
+        */
+        b2.setVersion(1);
+        b2.setMerkleRoot(new Sha256Hash("22284e9b7b34072c0a2c4bf2c77f3c6f00df80f0485e4e6a86d5d7dff75db5f4"));
+        b2.setDifficultyTarget(0x1d0b118d);
+        b2.setNonce(969);
+        b2.setTime(1318769442L);
+        b2.setPrevBlockHash(new Sha256Hash("812c8cdf824da11cfbb31453e8284d1b9cdf8c9269bcbf7640d614f43cd7eac0"));
+        System.out.println(b2.toString());
+        assertEquals("7fd90d37349af9057e0dea890971a8c2fa34457f63edb7db116aec9fb0670874", b2.getHashAsString());
         b2.verifyHeader();
         return b2;
     }
 
-    private static Block getBlock1() throws Exception {
-        Block b1 = new Block(testNet);
-        b1.setMerkleRoot(new Sha256Hash("0e8e58ecdacaa7b3c6304a35ae4ffff964816d2b80b62b58558866ce4e648c10"));
-        b1.setNonce(236038445);
-        b1.setTime(1296734340);
-        b1.setPrevBlockHash(new Sha256Hash("00000007199508e34a9ff81e6ec0c477a4cccff2a4767a8eee39c11db367b008"));
-        assertEquals("33004af7b70f4ffd5224b96989567022898f3712e86b28f4acf74b22b6cfc74b", b1.getScryptHashAsString());
+    private static Block getBlock2() throws Exception {
+        Block b1 = new Block(mainNet);
+        b1.setVersion(2);
+        b1.setMerkleRoot(new Sha256Hash("58718d9e5dbea2908708b7161dae5e69bbaef9bcb61ce7dc3c0f104ca5a832cc"));
+        b1.setDifficultyTarget(457579461L);
+        b1.setNonce(819999489L);
+        b1.setTime(1377810040L);
+        b1.setPrevBlockHash(new Sha256Hash("2bc84fcd2c8b77264eba1a39516de8f4072d78d2e73d145ef6735e67fd3bc456"));
+        assertEquals("376da494aa83111552857ce6086ca61cdec64738d1852f93475f45b1ea7ba3cc", b1.getHashAsString());
         b1.verifyHeader();
         return b1;
     }

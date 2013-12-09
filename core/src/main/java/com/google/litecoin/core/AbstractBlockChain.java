@@ -363,7 +363,7 @@ public abstract class AbstractBlockChain {
                     block.verifyTransactions();
             } catch (VerificationException e) {
                 log.error("Failed to verify block: ", e);
-                log.error(block.getScryptHashAsString());
+                log.error(block.getHashAsString());
                 throw e;
             }
 
@@ -375,7 +375,7 @@ public abstract class AbstractBlockChain {
                 // block was solved whilst we were doing it. We put it to one side and try to connect it later when we
                 // have more blocks.
                 checkState(tryConnecting, "bug in tryConnectingOrphans");
-                log.warn("Block does not connect: {} prev {}", block.getScryptHashAsString(), block.getPrevBlockHash());
+                log.warn("Block does not connect: {} prev {}", block.getHashAsString(), block.getPrevBlockHash());
                 orphanBlocks.put(block.getHash(), new OrphanBlock(block, filteredTxHashList, filteredTxn));
                 return false;
             } else {

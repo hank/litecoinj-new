@@ -16,9 +16,12 @@
 
 package com.google.litecoin.params;
 
-import com.google.litecoin.core.NetworkParameters;
-import com.google.litecoin.core.Sha256Hash;
-import com.google.litecoin.core.Utils;
+import com.google.litecoin.core.*;
+import com.google.litecoin.script.Script;
+import com.google.litecoin.script.ScriptOpCodes;
+import org.spongycastle.util.encoders.Hex;
+
+import java.io.ByteArrayOutputStream;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -28,6 +31,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class MainNetParams extends NetworkParameters {
     public MainNetParams() {
         super();
+        genesisBlock = createGenesis(this);
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);
@@ -35,15 +39,17 @@ public class MainNetParams extends NetworkParameters {
         dumpedPrivateKeyHeader = 128;
         addressHeader = 48;
         port = 9333;
-        packetMagic = 0xfbc0b6dbL;
-        genesisBlock.setDifficultyTarget(0x1e0fffffL);
+        packetMagic = 0xfbc0b6db;
+        genesisBlock.setDifficultyTarget(0x1e0ffff0L);
         genesisBlock.setTime(1317972665L);
         genesisBlock.setNonce(2084524493L);
         genesisBlock.setMerkleRoot(new Sha256Hash("97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9"));
         id = ID_MAINNET;
         subsidyDecreaseBlockCount = 840000;
         spendableCoinbaseDepth = 100;
-        String genesisHash = genesisBlock.getScryptHashAsString();
+        String genesisHash = genesisBlock.getHashAsString();
+        checkState(genesisHash.equals("12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2"),
+                genesisHash);
 
         // This contains (at a minimum) the blocks which are not BIP30 compliant. BIP30 changed how duplicate
         // transactions are handled. Duplicated transactions could occur in the case where a coinbase had the same
@@ -58,10 +64,36 @@ public class MainNetParams extends NetworkParameters {
         */
 
         dnsSeeds = new String[] {
+                "dnsseed.litecointools.com",
                 "dnsseed.litecoinpool.org",
-                "dnsseed.bytesized-vps.com",
                 "dnsseed.ltc.xurious.com",
+                "dnsseed.koin-project.com",
+                "dnsseed.weminemnc.com",
+                "dnsseed.jointsecurityarea.org",
         };
+    }
+
+    private static Block createGenesis(NetworkParameters n) {
+        Block genesisBlock = new Block(n);
+        Transaction t = new Transaction(n);
+        try {
+            // A script containing the difficulty bits and the following message:
+            //
+            //   "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
+            byte[] bytes = Hex.decode
+                    ("04b217bb4e022309");
+            t.addInput(new TransactionInput(n, t, bytes));
+            ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
+            Script.writeBytes(scriptPubKeyBytes, Hex.decode
+                    ("41044870341873accab7600d65e204bb4ae47c43d20c562ebfbf70cbcb188da98dec8b5ccf0526c8e4d954c6b47b898cc30adf1ff77c2e518ddc9785b87ccb90b8cdac"));
+            scriptPubKeyBytes.write(ScriptOpCodes.OP_CHECKSIG);
+            t.addOutput(new TransactionOutput(n, t, Utils.toNanoCoins(50, 0), scriptPubKeyBytes.toByteArray()));
+        } catch (Exception e) {
+            // Cannot happen.
+            throw new RuntimeException(e);
+        }
+        genesisBlock.addTransaction(t);
+        return genesisBlock;
     }
 
     private static MainNetParams instance;

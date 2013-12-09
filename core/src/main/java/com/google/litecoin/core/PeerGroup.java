@@ -693,6 +693,7 @@ public class PeerGroup extends AbstractIdleService implements TransactionBroadca
                 BloomFilter filter = new BloomFilter(lastBloomFilterElementCount, bloomFilterFPRate, bloomFilterTweak);
                 for (PeerFilterProvider p : peerFilterProviders)
                     filter.merge(p.getBloomFilter(lastBloomFilterElementCount, bloomFilterFPRate, bloomFilterTweak));
+/*          Don't set bloom - new clients will block you.
                 if (!filter.equals(bloomFilter)) {
                     bloomFilter = filter;
                     for (Peer peer : peers)
@@ -702,6 +703,7 @@ public class PeerGroup extends AbstractIdleService implements TransactionBroadca
                             throw new RuntimeException(e);
                         }
                 }
+*/
             }
             // Now adjust the earliest key time backwards by a week to handle the case of clock drift. This can occur
             // both in block header timestamps and if the users clock was out of sync when the key was first created
@@ -847,12 +849,14 @@ public class PeerGroup extends AbstractIdleService implements TransactionBroadca
             // Give the peer a filter that can be used to probabilistically drop transactions that
             // aren't relevant to our wallet. We may still receive some false positives, which is
             // OK because it helps improve wallet privacy. Old nodes will just ignore the message.
+/*          Don't set bloom - new clients will block you.
             try {
                 if (bloomFilter != null) peer.setBloomFilter(bloomFilter);
             } catch (IOException e) {
                 // That was quick...already disconnected
             }
-            // Link the peer to the memory pool so broadcast transactions have their confidence levels updated.
+
+*/            // Link the peer to the memory pool so broadcast transactions have their confidence levels updated.
             peer.setDownloadData(false);
             // TODO: The peer should calculate the fast catchup time from the added wallets here.
             for (Wallet wallet : wallets)
