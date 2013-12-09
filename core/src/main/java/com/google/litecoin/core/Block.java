@@ -512,7 +512,6 @@ public class Block extends Message {
         }
     }
     private Sha256Hash calculateScryptHash() {
-
         try {
             ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(HEADER_SIZE);
             writeHeader(bos);
@@ -520,7 +519,6 @@ public class Block extends Message {
         } catch (IOException e) {
             throw new RuntimeException(e); // Cannot happen.
         }
-
     }
 
     /**
@@ -828,12 +826,12 @@ public class Block extends Message {
         if (!(o instanceof Block))
             return false;
         Block other = (Block) o;
-        return getScryptHash().equals(other.getScryptHash());
+        return getHash().equals(other.getHash());
     }
 
     @Override
     public int hashCode() {
-        return getScryptHash().hashCode();
+        return getHash().hashCode();
     }
 
     /**
@@ -1035,7 +1033,7 @@ public class Block extends Message {
             b.addTransaction(t);
         }
 
-        b.setPrevBlockHash(getScryptHash());
+        b.setPrevBlockHash(getHash());
         // Don't let timestamp go backwards
         if (getTimeSeconds() >= time)
             b.setTime(getTimeSeconds() + 1);
