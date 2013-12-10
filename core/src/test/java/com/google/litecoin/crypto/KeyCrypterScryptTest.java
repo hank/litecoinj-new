@@ -19,8 +19,8 @@ import com.google.litecoin.core.Utils;
 import com.google.litecoin.utils.BriefLogFormatter;
 import com.google.protobuf.ByteString;
 
-import org.bitcoinj.wallet.Protos;
-import org.bitcoinj.wallet.Protos.ScryptParameters;
+import org.litecoinj.wallet.Protos;
+import org.litecoinj.wallet.Protos.ScryptParameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

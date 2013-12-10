@@ -17,7 +17,7 @@ package com.google.litecoin.crypto;
 
 import java.io.Serializable;
 
-import org.bitcoinj.wallet.Protos.Wallet.EncryptionType;
+import org.litecoinj.wallet.Protos.Wallet.EncryptionType;
 import org.spongycastle.crypto.params.KeyParameter;
 
 /**

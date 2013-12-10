@@ -73,7 +73,7 @@ public class VersionMessage extends Message {
     public boolean relayTxesBeforeFilter;
 
     /** The version of this library release, as a string. */
-    public static final String BITCOINJ_VERSION = "1.11";
+    public static final String BITCOINJ_VERSION = "1.10.3-trunk";
     /** The value that is prepended to the subVer field of this application. */
     public static final String LIBRARY_SUBVER = "/litecoinj:" + BITCOINJ_VERSION + "/";
 

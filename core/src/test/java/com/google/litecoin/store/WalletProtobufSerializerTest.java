@@ -9,7 +9,7 @@ import com.google.litecoin.utils.BriefLogFormatter;
 import com.google.litecoin.utils.TestUtils;
 import com.google.litecoin.utils.Threading;
 import com.google.protobuf.ByteString;
-import org.bitcoinj.wallet.Protos;
+import org.litecoinj.wallet.Protos;
 import org.junit.Before;
 import org.junit.Test;
 
