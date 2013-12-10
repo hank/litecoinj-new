@@ -1,10 +1,10 @@
 package com.google.litecoin.store;
 
-
 import com.google.litecoin.core.*;
 import com.google.litecoin.core.TransactionConfidence.ConfidenceType;
 import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.params.UnitTestParams;
+import com.google.litecoin.script.ScriptBuilder;
 import com.google.litecoin.utils.BriefLogFormatter;
 import com.google.litecoin.utils.TestUtils;
 import com.google.litecoin.utils.Threading;
@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -27,19 +28,24 @@ import static org.junit.Assert.*;
 public class WalletProtobufSerializerTest {
     static final NetworkParameters params = UnitTestParams.get();
     private ECKey myKey;
+    private ECKey myWatchedKey;
     private Address myAddress;
     private Wallet myWallet;
 
     public static String WALLET_DESCRIPTION  = "The quick brown fox lives in \u4f26\u6566"; // Beijing in Chinese
+    private long mScriptCreationTime;
 
     @Before
     public void setUp() throws Exception {
         BriefLogFormatter.initVerbose();
+        myWatchedKey = new ECKey();
         myKey = new ECKey();
         myKey.setCreationTimeSeconds(123456789L);
         myAddress = myKey.toAddress(params);
         myWallet = new Wallet(params);
         myWallet.addKey(myKey);
+        mScriptCreationTime = new Date().getTime() / 1000 - 1234;
+        myWallet.addWatchedAddress(myWatchedKey.toAddress(params), mScriptCreationTime);
         myWallet.setDescription(WALLET_DESCRIPTION);
     }
 
@@ -55,6 +61,11 @@ public class WalletProtobufSerializerTest {
                 wallet1.findKeyFromPubHash(myKey.getPubKeyHash()).getPrivKeyBytes());
         assertEquals(myKey.getCreationTimeSeconds(),
                 wallet1.findKeyFromPubHash(myKey.getPubKeyHash()).getCreationTimeSeconds());
+        assertEquals(mScriptCreationTime,
+                wallet1.getWatchedScripts().get(0).getCreationTimeSeconds());
+        assertEquals(1, wallet1.getWatchedScripts().size());
+        assertEquals(ScriptBuilder.createOutputScript(myWatchedKey.toAddress(params)),
+                wallet1.getWatchedScripts().get(0));
         assertEquals(WALLET_DESCRIPTION, wallet1.getDescription());
     }
 

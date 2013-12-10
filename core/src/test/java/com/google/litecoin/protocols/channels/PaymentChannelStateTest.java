@@ -106,8 +106,7 @@ public class PaymentChannelStateTest extends TestWithWallet {
         try {
             channelState.initiate();
             fail();
-        } catch (ValueOutOfRangeException e) {
-            assertTrue(e.getMessage().contains("afford"));
+        } catch (InsufficientMoneyException e) {
         }
     }
 
@@ -182,7 +181,7 @@ public class PaymentChannelStateTest extends TestWithWallet {
         totalPayment = totalPayment.add(size);
         serverState.incrementPayment(halfCoin.subtract(totalPayment), signature);
 
-        // And close the channel.
+        // And settle the channel.
         serverState.close();
         assertEquals(PaymentChannelServerState.State.CLOSING, serverState.getState());
         final TxFuturePair pair2 = broadcasts.take();
@@ -631,10 +630,10 @@ public class PaymentChannelStateTest extends TestWithWallet {
 
         serverState.incrementPayment(Utils.CENT.subtract(totalPayment), payment.signature.encodeToBitcoin());
 
-        // And close the channel.
+        // And settle the channel.
         serverState.close();
         assertEquals(PaymentChannelServerState.State.CLOSING, serverState.getState());
-        pair = broadcasts.take();  // close
+        pair = broadcasts.take();  // settle
         pair.future.set(pair.tx);
         assertEquals(PaymentChannelServerState.State.CLOSED, serverState.getState());
         serverState.close();
@@ -698,8 +697,7 @@ public class PaymentChannelStateTest extends TestWithWallet {
         try {
             serverState.close();
             fail();
-        } catch (ValueOutOfRangeException e) {
-            assertTrue(e.getMessage().contains("unable to pay required fee"));
+        } catch (InsufficientMoneyException e) {
         }
 
         // Now give the server enough coins to pay the fee
@@ -711,7 +709,7 @@ public class PaymentChannelStateTest extends TestWithWallet {
         try {
             serverState.close();
             fail();
-        } catch (ValueOutOfRangeException e) {
+        } catch (InsufficientMoneyException e) {
             assertTrue(e.getMessage().contains("more in fees"));
         }
 
@@ -719,7 +717,7 @@ public class PaymentChannelStateTest extends TestWithWallet {
         totalRefund = totalRefund.subtract(BigInteger.ONE.shiftLeft(1));
         serverState.incrementPayment(totalRefund, signature);
 
-        // And close the channel.
+        // And settle the channel.
         serverState.close();
         assertEquals(PaymentChannelServerState.State.CLOSING, serverState.getState());
         pair = broadcasts.take();

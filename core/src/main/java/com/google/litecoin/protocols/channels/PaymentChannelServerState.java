@@ -283,7 +283,7 @@ public class PaymentChannelServerState {
      * @throws VerificationException If the signature does not verify or size is out of range (incl being rejected by the network as dust).
      * @return true if there is more value left on the channel, false if it is now fully used up.
      */
-    public synchronized boolean incrementPayment(BigInteger refundSize, byte[] signatureBytes) throws VerificationException, ValueOutOfRangeException {
+    public synchronized boolean incrementPayment(BigInteger refundSize, byte[] signatureBytes) throws VerificationException, ValueOutOfRangeException, InsufficientMoneyException {
         checkState(state == State.READY);
         checkNotNull(refundSize);
         checkNotNull(signatureBytes);
@@ -360,9 +360,9 @@ public class PaymentChannelServerState {
      * @return a future which completes when the provided multisig contract successfully broadcasts, or throws if the
      *         broadcast fails for some reason. Note that if the network simply rejects the transaction, this future
      *         will never complete, a timeout should be used.
-     * @throws ValueOutOfRangeException If the payment tx would have cost more in fees to spend than it is worth.
+     * @throws InsufficientMoneyException If the payment tx would have cost more in fees to spend than it is worth.
      */
-    public synchronized ListenableFuture<Transaction> close() throws ValueOutOfRangeException {
+    public synchronized ListenableFuture<Transaction> close() throws InsufficientMoneyException {
         if (storedServerChannel != null) {
             StoredServerChannel temp = storedServerChannel;
             storedServerChannel = null;
@@ -374,24 +374,14 @@ public class PaymentChannelServerState {
         }
 
         if (state.ordinal() < State.READY.ordinal()) {
-            log.error("Attempt to close channel in state " + state);
+            log.error("Attempt to settle channel in state " + state);
             state = State.CLOSED;
             closedFuture.set(null);
             return closedFuture;
         }
         if (state != State.READY) {
             // TODO: What is this codepath for?
-            log.warn("Failed attempt to close a channel in state " + state);
-            return closedFuture;
-        }
-
-        if (bestValueToMe.equals(BigInteger.ZERO)) {
-            // TODO: This is bogus. We shouldn't allow the client to get into this state (where they open and close
-            // a channel without sending us any money). We should either send an error at this point, or require
-            // the submission of an initial zero-valued payment during the open phase.
-            log.warn("Closing channel that never received any payments.");
-            state = State.CLOSED;
-            closedFuture.set(null);
+            log.warn("Failed attempt to settle a channel in state " + state);
             return closedFuture;
         }
         Transaction tx = null;
@@ -404,20 +394,21 @@ public class PaymentChannelServerState {
             // die. We could probably add features to the SendRequest API to make this a bit more efficient.
             signMultisigInput(tx, Transaction.SigHash.NONE, true);
             // Let wallet handle adding additional inputs/fee as necessary.
-            if (!wallet.completeTx(req))
-                throw new ValueOutOfRangeException("Unable to complete transaction - unable to pay required fee");
+            wallet.completeTx(req);
             feePaidForPayment = req.fee;
             log.info("Calculated fee is {}", feePaidForPayment);
-            if (feePaidForPayment.compareTo(bestValueToMe) >= 0)
-                throw new ValueOutOfRangeException(String.format("Had to pay more in fees (%s) than the channel was worth (%s)",
-                        feePaidForPayment, bestValueToMe));
+            if (feePaidForPayment.compareTo(bestValueToMe) >= 0) {
+                final String msg = String.format("Had to pay more in fees (%s) than the channel was worth (%s)",
+                        feePaidForPayment, bestValueToMe);
+                throw new InsufficientMoneyException(feePaidForPayment.subtract(bestValueToMe), msg);
+            }
             // Now really sign the multisig input.
             signMultisigInput(tx, Transaction.SigHash.ALL, false);
             // Some checks that shouldn't be necessary but it can't hurt to check.
             tx.verify();  // Sanity check syntax.
             for (TransactionInput input : tx.getInputs())
                 input.verify();  // Run scripts and ensure it is valid.
-        } catch (ValueOutOfRangeException e) {
+        } catch (InsufficientMoneyException e) {
             throw e;  // Don't fall through.
         } catch (Exception e) {
             log.error("Could not verify self-built tx\nMULTISIG {}\nCLOSE {}", multisigContract, tx != null ? tx : "");
@@ -435,7 +426,7 @@ public class PaymentChannelServerState {
             }
 
             @Override public void onFailure(Throwable throwable) {
-                log.error("Failed to close channel, could not broadcast: {}", throwable.toString());
+                log.error("Failed to settle channel, could not broadcast: {}", throwable.toString());
                 throwable.printStackTrace();
                 state = State.ERROR;
                 closedFuture.setException(throwable);
@@ -445,14 +436,14 @@ public class PaymentChannelServerState {
     }
 
     /**
-     * Gets the highest payment to ourselves (which we will receive on close(), not including fees)
+     * Gets the highest payment to ourselves (which we will receive on settle(), not including fees)
      */
     public synchronized BigInteger getBestValueToMe() {
         return bestValueToMe;
     }
 
     /**
-     * Gets the fee paid in the final payment transaction (only available if close() did not throw an exception)
+     * Gets the fee paid in the final payment transaction (only available if settle() did not throw an exception)
      */
     public synchronized BigInteger getFeePaid() {
         checkState(state == State.CLOSED || state == State.CLOSING);

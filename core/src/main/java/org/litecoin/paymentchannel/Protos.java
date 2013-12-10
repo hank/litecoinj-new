@@ -143,19 +143,20 @@ public final class Protos {
      */
     org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder getUpdatePaymentOrBuilder();
 
-    // optional .paymentchannels.Close close = 9;
+    // optional .paymentchannels.Settlement settlement = 9;
     /**
-     * <code>optional .paymentchannels.Close close = 9;</code>
+     * <code>optional .paymentchannels.Settlement settlement = 9;</code>
      */
-    boolean hasClose();
+    boolean hasSettlement();
     /**
-     * <code>optional .paymentchannels.Close close = 9;</code>
+     * <code>optional .paymentchannels.Settlement settlement = 9;</code>
      */
-    org.litecoin.paymentchannel.Protos.Close getClose();
+    org.litecoin.paymentchannel.Protos.Settlement getSettlement();
     /**
-     * <code>optional .paymentchannels.Close close = 9;</code>
+     * <code>optional .paymentchannels.Settlement settlement = 9;</code>
      */
-    org.litecoin.paymentchannel.Protos.CloseOrBuilder getCloseOrBuilder();
+
+    org.litecoin.paymentchannel.Protos.SettlementOrBuilder getSettlementOrBuilder();
 
     // optional .paymentchannels.Error error = 10;
     /**
@@ -331,14 +332,14 @@ public final class Protos {
               break;
             }
             case 74: {
-              org.litecoin.paymentchannel.Protos.Close.Builder subBuilder = null;
+              org.litecoin.paymentchannel.Protos.Settlement.Builder subBuilder = null;
               if (((bitField0_ & 0x00000100) == 0x00000100)) {
-                subBuilder = close_.toBuilder();
+                subBuilder = settlement_.toBuilder();
               }
-              close_ = input.readMessage(org.litecoin.paymentchannel.Protos.Close.PARSER, extensionRegistry);
+              settlement_ = input.readMessage(org.litecoin.paymentchannel.Protos.Settlement.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(close_);
-                close_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(settlement_);
+                settlement_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000100;
               break;
@@ -458,11 +459,14 @@ public final class Protos {
        * takes the most recent signature it received in an UPDATE_PAYMENT and uses it to create a
        * valid transaction, which it then broadcasts on the network.
        *
-       * If the server sends it to the client, then it can either be a simple "good bye" message or
-       * it can include the fully signed close transaction and give it back so the client can
-       * eventually broadcast it as well, in case the server fails to do so for some reason (and
-       * more usefully so the client can build on it). In that case the server replies to a CLOSE
-       * with another CLOSE and then disconnects.
+       * Once broadcast is complete, it sends back another CLOSE message with the settlement field set, containing
+       * the final state of the contract.
+       *
+       * The server is allowed to initiate settlement whenever it wants, in which case the client will
+       * asynchronously receive a CLOSE message with the settlement field set. The server is also allowed
+       * to send a CLOSE to mark the end of a connection without any settlement taking place, in which
+       * case this is just an equivalent to a TCP FIN packet. An explicit end-of-protocol markers can be
+       * useful when this protocol is embedded inside another.
        * </pre>
        */
       CLOSE(9, 9),
@@ -537,11 +541,14 @@ public final class Protos {
        * takes the most recent signature it received in an UPDATE_PAYMENT and uses it to create a
        * valid transaction, which it then broadcasts on the network.
        *
-       * If the server sends it to the client, then it can either be a simple "good bye" message or
-       * it can include the fully signed close transaction and give it back so the client can
-       * eventually broadcast it as well, in case the server fails to do so for some reason (and
-       * more usefully so the client can build on it). In that case the server replies to a CLOSE
-       * with another CLOSE and then disconnects.
+       * Once broadcast is complete, it sends back another CLOSE message with the settlement field set, containing
+       * the final state of the contract.
+       *
+       * The server is allowed to initiate settlement whenever it wants, in which case the client will
+       * asynchronously receive a CLOSE message with the settlement field set. The server is also allowed
+       * to send a CLOSE to mark the end of a connection without any settlement taking place, in which
+       * case this is just an equivalent to a TCP FIN packet. An explicit end-of-protocol markers can be
+       * useful when this protocol is embedded inside another.
        * </pre>
        */
       public static final int CLOSE_VALUE = 9;
@@ -819,26 +826,26 @@ public final class Protos {
       return updatePayment_;
     }
 
-    // optional .paymentchannels.Close close = 9;
-    public static final int CLOSE_FIELD_NUMBER = 9;
-    private org.litecoin.paymentchannel.Protos.Close close_;
+    // optional .paymentchannels.Settlement settlement = 9;
+    public static final int SETTLEMENT_FIELD_NUMBER = 9;
+    private org.litecoin.paymentchannel.Protos.Settlement settlement_;
     /**
-     * <code>optional .paymentchannels.Close close = 9;</code>
+     * <code>optional .paymentchannels.Settlement settlement = 9;</code>
      */
-    public boolean hasClose() {
+    public boolean hasSettlement() {
       return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
-     * <code>optional .paymentchannels.Close close = 9;</code>
+     * <code>optional .paymentchannels.Settlement settlement = 9;</code>
      */
-    public org.litecoin.paymentchannel.Protos.Close getClose() {
-      return close_;
+    public org.litecoin.paymentchannel.Protos.Settlement getSettlement() {
+      return settlement_;
     }
     /**
-     * <code>optional .paymentchannels.Close close = 9;</code>
+     * <code>optional .paymentchannels.Settlement settlement = 9;</code>
      */
-    public org.litecoin.paymentchannel.Protos.CloseOrBuilder getCloseOrBuilder() {
-      return close_;
+    public org.litecoin.paymentchannel.Protos.SettlementOrBuilder getSettlementOrBuilder() {
+      return settlement_;
     }
 
     // optional .paymentchannels.Error error = 10;
@@ -872,7 +879,7 @@ public final class Protos {
       returnRefund_ = org.litecoin.paymentchannel.Protos.ReturnRefund.getDefaultInstance();
       provideContract_ = org.litecoin.paymentchannel.Protos.ProvideContract.getDefaultInstance();
       updatePayment_ = org.litecoin.paymentchannel.Protos.UpdatePayment.getDefaultInstance();
-      close_ = org.litecoin.paymentchannel.Protos.Close.getDefaultInstance();
+      settlement_ = org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance();
       error_ = org.litecoin.paymentchannel.Protos.Error.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -926,8 +933,8 @@ public final class Protos {
           return false;
         }
       }
-      if (hasClose()) {
-        if (!getClose().isInitialized()) {
+      if (hasSettlement()) {
+        if (!getSettlement().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -964,7 +971,7 @@ public final class Protos {
         output.writeMessage(8, updatePayment_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        output.writeMessage(9, close_);
+        output.writeMessage(9, settlement_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         output.writeMessage(10, error_);
@@ -1012,7 +1019,7 @@ public final class Protos {
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, close_);
+          .computeMessageSize(9, settlement_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         size += com.google.protobuf.CodedOutputStream
@@ -1139,7 +1146,7 @@ public final class Protos {
           getReturnRefundFieldBuilder();
           getProvideContractFieldBuilder();
           getUpdatePaymentFieldBuilder();
-          getCloseFieldBuilder();
+          getSettlementFieldBuilder();
           getErrorFieldBuilder();
         }
       }
@@ -1193,10 +1200,11 @@ public final class Protos {
           updatePaymentBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000080);
-        if (closeBuilder_ == null) {
-          close_ = org.litecoin.paymentchannel.Protos.Close.getDefaultInstance();
+
+        if (settlementBuilder_ == null) {
+          settlement_ = org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance();
         } else {
-          closeBuilder_.clear();
+          settlementBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000100);
         if (errorBuilder_ == null) {
@@ -1296,10 +1304,10 @@ public final class Protos {
         if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
           to_bitField0_ |= 0x00000100;
         }
-        if (closeBuilder_ == null) {
-          result.close_ = close_;
+        if (settlementBuilder_ == null) {
+          result.settlement_ = settlement_;
         } else {
-          result.close_ = closeBuilder_.build();
+          result.settlement_ = settlementBuilder_.build();
         }
         if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
           to_bitField0_ |= 0x00000200;
@@ -1349,8 +1357,8 @@ public final class Protos {
         if (other.hasUpdatePayment()) {
           mergeUpdatePayment(other.getUpdatePayment());
         }
-        if (other.hasClose()) {
-          mergeClose(other.getClose());
+        if (other.hasSettlement()) {
+          mergeSettlement(other.getSettlement());
         }
         if (other.hasError()) {
           mergeError(other.getError());
@@ -1406,8 +1414,8 @@ public final class Protos {
             return false;
           }
         }
-        if (hasClose()) {
-          if (!getClose().isInitialized()) {
+        if (hasSettlement()) {
+          if (!getSettlement().isInitialized()) {
             
             return false;
           }
@@ -2349,121 +2357,121 @@ public final class Protos {
         return updatePaymentBuilder_;
       }
 
-      // optional .paymentchannels.Close close = 9;
-      private org.litecoin.paymentchannel.Protos.Close close_ = org.litecoin.paymentchannel.Protos.Close.getDefaultInstance();
+      // optional .paymentchannels.Settlement settlement = 9;
+      private org.litecoin.paymentchannel.Protos.Settlement settlement_ = org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
-          org.litecoin.paymentchannel.Protos.Close, org.litecoin.paymentchannel.Protos.Close.Builder, org.litecoin.paymentchannel.Protos.CloseOrBuilder> closeBuilder_;
+          org.litecoin.paymentchannel.Protos.Settlement, org.litecoin.paymentchannel.Protos.Settlement.Builder, org.litecoin.paymentchannel.Protos.SettlementOrBuilder> settlementBuilder_;
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public boolean hasClose() {
+      public boolean hasSettlement() {
         return ((bitField0_ & 0x00000100) == 0x00000100);
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public org.litecoin.paymentchannel.Protos.Close getClose() {
-        if (closeBuilder_ == null) {
-          return close_;
+      public org.litecoin.paymentchannel.Protos.Settlement getSettlement() {
+        if (settlementBuilder_ == null) {
+          return settlement_;
         } else {
-          return closeBuilder_.getMessage();
+          return settlementBuilder_.getMessage();
         }
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public Builder setClose(org.litecoin.paymentchannel.Protos.Close value) {
-        if (closeBuilder_ == null) {
+      public Builder setSettlement(org.litecoin.paymentchannel.Protos.Settlement value) {
+        if (settlementBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          close_ = value;
+          settlement_ = value;
           onChanged();
         } else {
-          closeBuilder_.setMessage(value);
+          settlementBuilder_.setMessage(value);
         }
         bitField0_ |= 0x00000100;
         return this;
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public Builder setClose(
-          org.litecoin.paymentchannel.Protos.Close.Builder builderForValue) {
-        if (closeBuilder_ == null) {
-          close_ = builderForValue.build();
+      public Builder setSettlement(
+          org.litecoin.paymentchannel.Protos.Settlement.Builder builderForValue) {
+        if (settlementBuilder_ == null) {
+          settlement_ = builderForValue.build();
           onChanged();
         } else {
-          closeBuilder_.setMessage(builderForValue.build());
+          settlementBuilder_.setMessage(builderForValue.build());
         }
         bitField0_ |= 0x00000100;
         return this;
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public Builder mergeClose(org.litecoin.paymentchannel.Protos.Close value) {
-        if (closeBuilder_ == null) {
+      public Builder mergeSettlement(org.litecoin.paymentchannel.Protos.Settlement value) {
+        if (settlementBuilder_ == null) {
           if (((bitField0_ & 0x00000100) == 0x00000100) &&
-              close_ != org.litecoin.paymentchannel.Protos.Close.getDefaultInstance()) {
-            close_ =
-              org.litecoin.paymentchannel.Protos.Close.newBuilder(close_).mergeFrom(value).buildPartial();
+              settlement_ != org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance()) {
+            settlement_ =
+              org.litecoin.paymentchannel.Protos.Settlement.newBuilder(settlement_).mergeFrom(value).buildPartial();
           } else {
-            close_ = value;
+            settlement_ = value;
           }
           onChanged();
         } else {
-          closeBuilder_.mergeFrom(value);
+          settlementBuilder_.mergeFrom(value);
         }
         bitField0_ |= 0x00000100;
         return this;
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public Builder clearClose() {
-        if (closeBuilder_ == null) {
-          close_ = org.litecoin.paymentchannel.Protos.Close.getDefaultInstance();
+      public Builder clearSettlement() {
+        if (settlementBuilder_ == null) {
+          settlement_ = org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance();
           onChanged();
         } else {
-          closeBuilder_.clear();
+          settlementBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public org.litecoin.paymentchannel.Protos.Close.Builder getCloseBuilder() {
+      public org.litecoin.paymentchannel.Protos.Settlement.Builder getSettlementBuilder() {
         bitField0_ |= 0x00000100;
         onChanged();
-        return getCloseFieldBuilder().getBuilder();
+        return getSettlementFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
-      public org.litecoin.paymentchannel.Protos.CloseOrBuilder getCloseOrBuilder() {
-        if (closeBuilder_ != null) {
-          return closeBuilder_.getMessageOrBuilder();
+      public org.litecoin.paymentchannel.Protos.SettlementOrBuilder getSettlementOrBuilder() {
+        if (settlementBuilder_ != null) {
+          return settlementBuilder_.getMessageOrBuilder();
         } else {
-          return close_;
+          return settlement_;
         }
       }
       /**
-       * <code>optional .paymentchannels.Close close = 9;</code>
+       * <code>optional .paymentchannels.Settlement settlement = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          org.litecoin.paymentchannel.Protos.Close, org.litecoin.paymentchannel.Protos.Close.Builder, org.litecoin.paymentchannel.Protos.CloseOrBuilder>
-          getCloseFieldBuilder() {
-        if (closeBuilder_ == null) {
-          closeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              org.litecoin.paymentchannel.Protos.Close, org.litecoin.paymentchannel.Protos.Close.Builder, org.litecoin.paymentchannel.Protos.CloseOrBuilder>(
-                  close_,
+          org.litecoin.paymentchannel.Protos.Settlement, org.litecoin.paymentchannel.Protos.Settlement.Builder, org.litecoin.paymentchannel.Protos.SettlementOrBuilder>
+          getSettlementFieldBuilder() {
+        if (settlementBuilder_ == null) {
+          settlementBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.litecoin.paymentchannel.Protos.Settlement, org.litecoin.paymentchannel.Protos.Settlement.Builder, org.litecoin.paymentchannel.Protos.SettlementOrBuilder>(
+                  settlement_,
                   getParentForChildren(),
                   isClean());
-          close_ = null;
+          settlement_ = null;
         }
-        return closeBuilder_;
+        return settlementBuilder_;
       }
 
       // optional .paymentchannels.Error error = 10;
@@ -3791,8 +3799,8 @@ public final class Protos {
      * Rough UNIX time for when the channel expires. This is determined by the block header
      * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
      * Channels could also be specified in terms of block heights but then how do you know the
-     * current chain height if you don't have internet access? Trust secondary? Probably opens up
-     * attack vectors. We can assume primary has an independent clock, however. If primary
+     * current chain height if you don't have internet access? Trust the server? Probably opens up
+     * attack vectors. We can assume the client has an independent clock, however. If the client
      * considers this value too far off (eg more than a day), it may send an ERROR and close the
      * channel.
      * </pre>
@@ -3805,19 +3813,47 @@ public final class Protos {
      * Rough UNIX time for when the channel expires. This is determined by the block header
      * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
      * Channels could also be specified in terms of block heights but then how do you know the
-     * current chain height if you don't have internet access? Trust secondary? Probably opens up
-     * attack vectors. We can assume primary has an independent clock, however. If primary
+     * current chain height if you don't have internet access? Trust the server? Probably opens up
+     * attack vectors. We can assume the client has an independent clock, however. If the client
      * considers this value too far off (eg more than a day), it may send an ERROR and close the
      * channel.
      * </pre>
      */
     long getExpireTimeSecs();
+
+    // required uint64 min_payment = 4;
+    /**
+     * <code>required uint64 min_payment = 4;</code>
+     *
+     * <pre>
+     * The amount of money the server requires for the initial payment. The act of opening a channel
+     * always transfers some quantity of money to the server: it's impossible to have a channel with
+     * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+     * due to having paid under the dust limit. Because the dust limit will float in future, the
+     * server tells the client what it thinks it is, and the client is supposed to sanity check this
+     * value.
+     * </pre>
+     */
+    boolean hasMinPayment();
+    /**
+     * <code>required uint64 min_payment = 4;</code>
+     *
+     * <pre>
+     * The amount of money the server requires for the initial payment. The act of opening a channel
+     * always transfers some quantity of money to the server: it's impossible to have a channel with
+     * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+     * due to having paid under the dust limit. Because the dust limit will float in future, the
+     * server tells the client what it thinks it is, and the client is supposed to sanity check this
+     * value.
+     * </pre>
+     */
+    long getMinPayment();
   }
   /**
    * Protobuf type {@code paymentchannels.Initiate}
    *
    * <pre>
-   * Sent from secondary to primary once version nego is done.
+   * Sent from server to client once version nego is done.
    * </pre>
    */
   public static final class Initiate extends
@@ -3881,6 +3917,11 @@ public final class Protos {
             case 24: {
               bitField0_ |= 0x00000004;
               expireTimeSecs_ = input.readUInt64();
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000008;
+              minPayment_ = input.readUInt64();
               break;
             }
           }
@@ -3991,8 +4032,8 @@ public final class Protos {
      * Rough UNIX time for when the channel expires. This is determined by the block header
      * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
      * Channels could also be specified in terms of block heights but then how do you know the
-     * current chain height if you don't have internet access? Trust secondary? Probably opens up
-     * attack vectors. We can assume primary has an independent clock, however. If primary
+     * current chain height if you don't have internet access? Trust the server? Probably opens up
+     * attack vectors. We can assume the client has an independent clock, however. If the client
      * considers this value too far off (eg more than a day), it may send an ERROR and close the
      * channel.
      * </pre>
@@ -4007,8 +4048,8 @@ public final class Protos {
      * Rough UNIX time for when the channel expires. This is determined by the block header
      * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
      * Channels could also be specified in terms of block heights but then how do you know the
-     * current chain height if you don't have internet access? Trust secondary? Probably opens up
-     * attack vectors. We can assume primary has an independent clock, however. If primary
+     * current chain height if you don't have internet access? Trust the server? Probably opens up
+     * attack vectors. We can assume the client has an independent clock, however. If the client
      * considers this value too far off (eg more than a day), it may send an ERROR and close the
      * channel.
      * </pre>
@@ -4017,10 +4058,45 @@ public final class Protos {
       return expireTimeSecs_;
     }
 
+    // required uint64 min_payment = 4;
+    public static final int MIN_PAYMENT_FIELD_NUMBER = 4;
+    private long minPayment_;
+    /**
+     * <code>required uint64 min_payment = 4;</code>
+     *
+     * <pre>
+     * The amount of money the server requires for the initial payment. The act of opening a channel
+     * always transfers some quantity of money to the server: it's impossible to have a channel with
+     * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+     * due to having paid under the dust limit. Because the dust limit will float in future, the
+     * server tells the client what it thinks it is, and the client is supposed to sanity check this
+     * value.
+     * </pre>
+     */
+    public boolean hasMinPayment() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required uint64 min_payment = 4;</code>
+     *
+     * <pre>
+     * The amount of money the server requires for the initial payment. The act of opening a channel
+     * always transfers some quantity of money to the server: it's impossible to have a channel with
+     * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+     * due to having paid under the dust limit. Because the dust limit will float in future, the
+     * server tells the client what it thinks it is, and the client is supposed to sanity check this
+     * value.
+     * </pre>
+     */
+    public long getMinPayment() {
+      return minPayment_;
+    }
+
     private void initFields() {
       multisigKey_ = com.google.protobuf.ByteString.EMPTY;
       minAcceptedChannelSize_ = 0L;
       expireTimeSecs_ = 0L;
+      minPayment_ = 0L;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -4039,6 +4115,10 @@ public final class Protos {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!hasMinPayment()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -4054,6 +4134,9 @@ public final class Protos {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeUInt64(3, expireTimeSecs_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeUInt64(4, minPayment_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -4075,6 +4158,10 @@ public final class Protos {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt64Size(3, expireTimeSecs_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(4, minPayment_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -4158,7 +4245,7 @@ public final class Protos {
      * Protobuf type {@code paymentchannels.Initiate}
      *
      * <pre>
-     * Sent from secondary to primary once version nego is done.
+     * Sent from server to client once version nego is done.
      * </pre>
      */
     public static final class Builder extends
@@ -4202,6 +4289,8 @@ public final class Protos {
         bitField0_ = (bitField0_ & ~0x00000002);
         expireTimeSecs_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000004);
+        minPayment_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -4242,6 +4331,10 @@ public final class Protos {
           to_bitField0_ |= 0x00000004;
         }
         result.expireTimeSecs_ = expireTimeSecs_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.minPayment_ = minPayment_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -4267,6 +4360,9 @@ public final class Protos {
         if (other.hasExpireTimeSecs()) {
           setExpireTimeSecs(other.getExpireTimeSecs());
         }
+        if (other.hasMinPayment()) {
+          setMinPayment(other.getMinPayment());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -4281,6 +4377,10 @@ public final class Protos {
           return false;
         }
         if (!hasExpireTimeSecs()) {
+          
+          return false;
+        }
+        if (!hasMinPayment()) {
           
           return false;
         }
@@ -4436,8 +4536,8 @@ public final class Protos {
        * Rough UNIX time for when the channel expires. This is determined by the block header
        * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
        * Channels could also be specified in terms of block heights but then how do you know the
-       * current chain height if you don't have internet access? Trust secondary? Probably opens up
-       * attack vectors. We can assume primary has an independent clock, however. If primary
+       * current chain height if you don't have internet access? Trust the server? Probably opens up
+       * attack vectors. We can assume the client has an independent clock, however. If the client
        * considers this value too far off (eg more than a day), it may send an ERROR and close the
        * channel.
        * </pre>
@@ -4452,8 +4552,8 @@ public final class Protos {
        * Rough UNIX time for when the channel expires. This is determined by the block header
        * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
        * Channels could also be specified in terms of block heights but then how do you know the
-       * current chain height if you don't have internet access? Trust secondary? Probably opens up
-       * attack vectors. We can assume primary has an independent clock, however. If primary
+       * current chain height if you don't have internet access? Trust the server? Probably opens up
+       * attack vectors. We can assume the client has an independent clock, however. If the client
        * considers this value too far off (eg more than a day), it may send an ERROR and close the
        * channel.
        * </pre>
@@ -4468,8 +4568,8 @@ public final class Protos {
        * Rough UNIX time for when the channel expires. This is determined by the block header
        * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
        * Channels could also be specified in terms of block heights but then how do you know the
-       * current chain height if you don't have internet access? Trust secondary? Probably opens up
-       * attack vectors. We can assume primary has an independent clock, however. If primary
+       * current chain height if you don't have internet access? Trust the server? Probably opens up
+       * attack vectors. We can assume the client has an independent clock, however. If the client
        * considers this value too far off (eg more than a day), it may send an ERROR and close the
        * channel.
        * </pre>
@@ -4487,8 +4587,8 @@ public final class Protos {
        * Rough UNIX time for when the channel expires. This is determined by the block header
        * timestamps which can be very inaccurate when miners use the obsolete RollNTime hack.
        * Channels could also be specified in terms of block heights but then how do you know the
-       * current chain height if you don't have internet access? Trust secondary? Probably opens up
-       * attack vectors. We can assume primary has an independent clock, however. If primary
+       * current chain height if you don't have internet access? Trust the server? Probably opens up
+       * attack vectors. We can assume the client has an independent clock, however. If the client
        * considers this value too far off (eg more than a day), it may send an ERROR and close the
        * channel.
        * </pre>
@@ -4496,6 +4596,75 @@ public final class Protos {
       public Builder clearExpireTimeSecs() {
         bitField0_ = (bitField0_ & ~0x00000004);
         expireTimeSecs_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      // required uint64 min_payment = 4;
+      private long minPayment_ ;
+      /**
+       * <code>required uint64 min_payment = 4;</code>
+       *
+       * <pre>
+       * The amount of money the server requires for the initial payment. The act of opening a channel
+       * always transfers some quantity of money to the server: it's impossible to have a channel with
+       * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+       * due to having paid under the dust limit. Because the dust limit will float in future, the
+       * server tells the client what it thinks it is, and the client is supposed to sanity check this
+       * value.
+       * </pre>
+       */
+      public boolean hasMinPayment() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required uint64 min_payment = 4;</code>
+       *
+       * <pre>
+       * The amount of money the server requires for the initial payment. The act of opening a channel
+       * always transfers some quantity of money to the server: it's impossible to have a channel with
+       * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+       * due to having paid under the dust limit. Because the dust limit will float in future, the
+       * server tells the client what it thinks it is, and the client is supposed to sanity check this
+       * value.
+       * </pre>
+       */
+      public long getMinPayment() {
+        return minPayment_;
+      }
+      /**
+       * <code>required uint64 min_payment = 4;</code>
+       *
+       * <pre>
+       * The amount of money the server requires for the initial payment. The act of opening a channel
+       * always transfers some quantity of money to the server: it's impossible to have a channel with
+       * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+       * due to having paid under the dust limit. Because the dust limit will float in future, the
+       * server tells the client what it thinks it is, and the client is supposed to sanity check this
+       * value.
+       * </pre>
+       */
+      public Builder setMinPayment(long value) {
+        bitField0_ |= 0x00000008;
+        minPayment_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required uint64 min_payment = 4;</code>
+       *
+       * <pre>
+       * The amount of money the server requires for the initial payment. The act of opening a channel
+       * always transfers some quantity of money to the server: it's impossible to have a channel with
+       * zero value transferred. This rule ensures that you can't get a channel that can't be settled
+       * due to having paid under the dust limit. Because the dust limit will float in future, the
+       * server tells the client what it thinks it is, and the client is supposed to sanity check this
+       * value.
+       * </pre>
+       */
+      public Builder clearMinPayment() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        minPayment_ = 0L;
         onChanged();
         return this;
       }
@@ -5599,6 +5768,41 @@ public final class Protos {
      * </pre>
      */
     com.google.protobuf.ByteString getTx();
+
+    // required .paymentchannels.UpdatePayment initial_payment = 2;
+    /**
+     * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+     *
+     * <pre>
+     * To open the channel, an initial payment of the server-specified dust limit value must be
+     * provided. This ensures that the channel is never in an un-settleable state due to either
+     * no payment tx having been provided at all, or a payment that is smaller than the dust
+     * limit being provided.
+     * </pre>
+     */
+    boolean hasInitialPayment();
+    /**
+     * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+     *
+     * <pre>
+     * To open the channel, an initial payment of the server-specified dust limit value must be
+     * provided. This ensures that the channel is never in an un-settleable state due to either
+     * no payment tx having been provided at all, or a payment that is smaller than the dust
+     * limit being provided.
+     * </pre>
+     */
+    org.litecoin.paymentchannel.Protos.UpdatePayment getInitialPayment();
+    /**
+     * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+     *
+     * <pre>
+     * To open the channel, an initial payment of the server-specified dust limit value must be
+     * provided. This ensures that the channel is never in an un-settleable state due to either
+     * no payment tx having been provided at all, or a payment that is smaller than the dust
+     * limit being provided.
+     * </pre>
+     */
+    org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder getInitialPaymentOrBuilder();
   }
   /**
    * Protobuf type {@code paymentchannels.ProvideContract}
@@ -5658,6 +5862,19 @@ public final class Protos {
             case 10: {
               bitField0_ |= 0x00000001;
               tx_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              org.litecoin.paymentchannel.Protos.UpdatePayment.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = initialPayment_.toBuilder();
+              }
+              initialPayment_ = input.readMessage(org.litecoin.paymentchannel.Protos.UpdatePayment.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(initialPayment_);
+                initialPayment_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
               break;
             }
           }
@@ -5734,8 +5951,52 @@ public final class Protos {
       return tx_;
     }
 
+    // required .paymentchannels.UpdatePayment initial_payment = 2;
+    public static final int INITIAL_PAYMENT_FIELD_NUMBER = 2;
+    private org.litecoin.paymentchannel.Protos.UpdatePayment initialPayment_;
+    /**
+     * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+     *
+     * <pre>
+     * To open the channel, an initial payment of the server-specified dust limit value must be
+     * provided. This ensures that the channel is never in an un-settleable state due to either
+     * no payment tx having been provided at all, or a payment that is smaller than the dust
+     * limit being provided.
+     * </pre>
+     */
+    public boolean hasInitialPayment() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+     *
+     * <pre>
+     * To open the channel, an initial payment of the server-specified dust limit value must be
+     * provided. This ensures that the channel is never in an un-settleable state due to either
+     * no payment tx having been provided at all, or a payment that is smaller than the dust
+     * limit being provided.
+     * </pre>
+     */
+    public org.litecoin.paymentchannel.Protos.UpdatePayment getInitialPayment() {
+      return initialPayment_;
+    }
+    /**
+     * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+     *
+     * <pre>
+     * To open the channel, an initial payment of the server-specified dust limit value must be
+     * provided. This ensures that the channel is never in an un-settleable state due to either
+     * no payment tx having been provided at all, or a payment that is smaller than the dust
+     * limit being provided.
+     * </pre>
+     */
+    public org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder getInitialPaymentOrBuilder() {
+      return initialPayment_;
+    }
+
     private void initFields() {
       tx_ = com.google.protobuf.ByteString.EMPTY;
+      initialPayment_ = org.litecoin.paymentchannel.Protos.UpdatePayment.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5743,6 +6004,14 @@ public final class Protos {
       if (isInitialized != -1) return isInitialized == 1;
 
       if (!hasTx()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasInitialPayment()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getInitialPayment().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -5756,6 +6025,9 @@ public final class Protos {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeBytes(1, tx_);
       }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, initialPayment_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -5768,6 +6040,10 @@ public final class Protos {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, tx_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, initialPayment_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -5881,6 +6157,7 @@ public final class Protos {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getInitialPaymentFieldBuilder();
         }
       }
       private static Builder create() {
@@ -5891,6 +6168,12 @@ public final class Protos {
         super.clear();
         tx_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
+        if (initialPaymentBuilder_ == null) {
+          initialPayment_ = org.litecoin.paymentchannel.Protos.UpdatePayment.getDefaultInstance();
+        } else {
+          initialPaymentBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -5923,6 +6206,14 @@ public final class Protos {
           to_bitField0_ |= 0x00000001;
         }
         result.tx_ = tx_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (initialPaymentBuilder_ == null) {
+          result.initialPayment_ = initialPayment_;
+        } else {
+          result.initialPayment_ = initialPaymentBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -5942,12 +6233,23 @@ public final class Protos {
         if (other.hasTx()) {
           setTx(other.getTx());
         }
+        if (other.hasInitialPayment()) {
+          mergeInitialPayment(other.getInitialPayment());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasTx()) {
+          
+          return false;
+        }
+        if (!hasInitialPayment()) {
+          
+          return false;
+        }
+        if (!getInitialPayment().isInitialized()) {
           
           return false;
         }
@@ -6043,6 +6345,186 @@ public final class Protos {
         tx_ = getDefaultInstance().getTx();
         onChanged();
         return this;
+      }
+
+      // required .paymentchannels.UpdatePayment initial_payment = 2;
+      private org.litecoin.paymentchannel.Protos.UpdatePayment initialPayment_ = org.litecoin.paymentchannel.Protos.UpdatePayment.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          org.litecoin.paymentchannel.Protos.UpdatePayment, org.litecoin.paymentchannel.Protos.UpdatePayment.Builder, org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder> initialPaymentBuilder_;
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public boolean hasInitialPayment() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public org.litecoin.paymentchannel.Protos.UpdatePayment getInitialPayment() {
+        if (initialPaymentBuilder_ == null) {
+          return initialPayment_;
+        } else {
+          return initialPaymentBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public Builder setInitialPayment(org.litecoin.paymentchannel.Protos.UpdatePayment value) {
+        if (initialPaymentBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          initialPayment_ = value;
+          onChanged();
+        } else {
+          initialPaymentBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public Builder setInitialPayment(
+          org.litecoin.paymentchannel.Protos.UpdatePayment.Builder builderForValue) {
+        if (initialPaymentBuilder_ == null) {
+          initialPayment_ = builderForValue.build();
+          onChanged();
+        } else {
+          initialPaymentBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public Builder mergeInitialPayment(org.litecoin.paymentchannel.Protos.UpdatePayment value) {
+        if (initialPaymentBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              initialPayment_ != org.litecoin.paymentchannel.Protos.UpdatePayment.getDefaultInstance()) {
+            initialPayment_ =
+              org.litecoin.paymentchannel.Protos.UpdatePayment.newBuilder(initialPayment_).mergeFrom(value).buildPartial();
+          } else {
+            initialPayment_ = value;
+          }
+          onChanged();
+        } else {
+          initialPaymentBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public Builder clearInitialPayment() {
+        if (initialPaymentBuilder_ == null) {
+          initialPayment_ = org.litecoin.paymentchannel.Protos.UpdatePayment.getDefaultInstance();
+          onChanged();
+        } else {
+          initialPaymentBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public org.litecoin.paymentchannel.Protos.UpdatePayment.Builder getInitialPaymentBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getInitialPaymentFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      public org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder getInitialPaymentOrBuilder() {
+        if (initialPaymentBuilder_ != null) {
+          return initialPaymentBuilder_.getMessageOrBuilder();
+        } else {
+          return initialPayment_;
+        }
+      }
+      /**
+       * <code>required .paymentchannels.UpdatePayment initial_payment = 2;</code>
+       *
+       * <pre>
+       * To open the channel, an initial payment of the server-specified dust limit value must be
+       * provided. This ensures that the channel is never in an un-settleable state due to either
+       * no payment tx having been provided at all, or a payment that is smaller than the dust
+       * limit being provided.
+       * </pre>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          org.litecoin.paymentchannel.Protos.UpdatePayment, org.litecoin.paymentchannel.Protos.UpdatePayment.Builder, org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder>
+          getInitialPaymentFieldBuilder() {
+        if (initialPaymentBuilder_ == null) {
+          initialPaymentBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.litecoin.paymentchannel.Protos.UpdatePayment, org.litecoin.paymentchannel.Protos.UpdatePayment.Builder, org.litecoin.paymentchannel.Protos.UpdatePaymentOrBuilder>(
+                  initialPayment_,
+                  getParentForChildren(),
+                  isClean());
+          initialPayment_ = null;
+        }
+        return initialPaymentBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:paymentchannels.ProvideContract)
@@ -6680,7 +7162,7 @@ public final class Protos {
     // @@protoc_insertion_point(class_scope:paymentchannels.UpdatePayment)
   }
 
-  public interface CloseOrBuilder
+  public interface SettlementOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
     // required bytes tx = 3;
@@ -6688,7 +7170,7 @@ public final class Protos {
      * <code>required bytes tx = 3;</code>
      *
      * <pre>
-     * A copy of the fully signed final contract that closes the channel. The client can verify
+     * A copy of the fully signed final contract that settles the channel. The client can verify
      * the transaction is correct and then commit it to their wallet.
      * </pre>
      */
@@ -6697,31 +7179,31 @@ public final class Protos {
      * <code>required bytes tx = 3;</code>
      *
      * <pre>
-     * A copy of the fully signed final contract that closes the channel. The client can verify
+     * A copy of the fully signed final contract that settles the channel. The client can verify
      * the transaction is correct and then commit it to their wallet.
      * </pre>
      */
     com.google.protobuf.ByteString getTx();
   }
   /**
-   * Protobuf type {@code paymentchannels.Close}
+   * Protobuf type {@code paymentchannels.Settlement}
    */
-  public static final class Close extends
+  public static final class Settlement extends
       com.google.protobuf.GeneratedMessage
-      implements CloseOrBuilder {
-    // Use Close.newBuilder() to construct.
-    private Close(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      implements SettlementOrBuilder {
+    // Use Settlement.newBuilder() to construct.
+    private Settlement(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private Close(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private Settlement(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
-    private static final Close defaultInstance;
-    public static Close getDefaultInstance() {
+    private static final Settlement defaultInstance;
+    public static Settlement getDefaultInstance() {
       return defaultInstance;
     }
 
-    public Close getDefaultInstanceForType() {
+    public Settlement getDefaultInstanceForType() {
       return defaultInstance;
     }
 
@@ -6731,7 +7213,7 @@ public final class Protos {
         getUnknownFields() {
       return this.unknownFields;
     }
-    private Close(
+    private Settlement(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -6773,28 +7255,28 @@ public final class Protos {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Close_descriptor;
+      return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Settlement_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Close_fieldAccessorTable
+      return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Settlement_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.litecoin.paymentchannel.Protos.Close.class, org.litecoin.paymentchannel.Protos.Close.Builder.class);
+              org.litecoin.paymentchannel.Protos.Settlement.class, org.litecoin.paymentchannel.Protos.Settlement.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Close> PARSER =
-        new com.google.protobuf.AbstractParser<Close>() {
-      public Close parsePartialFrom(
+    public static com.google.protobuf.Parser<Settlement> PARSER =
+        new com.google.protobuf.AbstractParser<Settlement>() {
+      public Settlement parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Close(input, extensionRegistry);
+        return new Settlement(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Close> getParserForType() {
+    public com.google.protobuf.Parser<Settlement> getParserForType() {
       return PARSER;
     }
 
@@ -6806,7 +7288,7 @@ public final class Protos {
      * <code>required bytes tx = 3;</code>
      *
      * <pre>
-     * A copy of the fully signed final contract that closes the channel. The client can verify
+     * A copy of the fully signed final contract that settles the channel. The client can verify
      * the transaction is correct and then commit it to their wallet.
      * </pre>
      */
@@ -6817,7 +7299,7 @@ public final class Protos {
      * <code>required bytes tx = 3;</code>
      *
      * <pre>
-     * A copy of the fully signed final contract that closes the channel. The client can verify
+     * A copy of the fully signed final contract that settles the channel. The client can verify
      * the transaction is correct and then commit it to their wallet.
      * </pre>
      */
@@ -6872,53 +7354,59 @@ public final class Protos {
       return super.writeReplace();
     }
 
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(
+
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(byte[] data)
+
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(java.io.InputStream input)
+
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseDelimitedFrom(java.io.InputStream input)
+
+    public static org.litecoin.paymentchannel.Protos.Settlement parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseDelimitedFrom(
+    public static org.litecoin.paymentchannel.Protos.Settlement parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(
+
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static org.litecoin.paymentchannel.Protos.Close parseFrom(
+
+    public static org.litecoin.paymentchannel.Protos.Settlement parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -6927,7 +7415,8 @@ public final class Protos {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.litecoin.paymentchannel.Protos.Close prototype) {
+
+    public static Builder newBuilder(org.litecoin.paymentchannel.Protos.Settlement prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -6939,24 +7428,24 @@ public final class Protos {
       return builder;
     }
     /**
-     * Protobuf type {@code paymentchannels.Close}
+     * Protobuf type {@code paymentchannels.Settlement}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.litecoin.paymentchannel.Protos.CloseOrBuilder {
+       implements org.litecoin.paymentchannel.Protos.SettlementOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Close_descriptor;
+        return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Settlement_descriptor;
       }
-
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Close_fieldAccessorTable
+
+        return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Settlement_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.litecoin.paymentchannel.Protos.Close.class, org.litecoin.paymentchannel.Protos.Close.Builder.class);
+                org.litecoin.paymentchannel.Protos.Settlement.class, org.litecoin.paymentchannel.Protos.Settlement.Builder.class);
       }
 
-      // Construct using org.litecoin.paymentchannel.Protos.Close.newBuilder()
+      // Construct using org.litecoin.paymentchannel.Protos.Settlement.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -6987,23 +7476,23 @@ public final class Protos {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Close_descriptor;
+        return org.litecoin.paymentchannel.Protos.internal_static_paymentchannels_Settlement_descriptor;
       }
 
-      public org.litecoin.paymentchannel.Protos.Close getDefaultInstanceForType() {
-        return org.litecoin.paymentchannel.Protos.Close.getDefaultInstance();
+      public org.litecoin.paymentchannel.Protos.Settlement getDefaultInstanceForType() {
+        return org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance();
       }
 
-      public org.litecoin.paymentchannel.Protos.Close build() {
-        org.litecoin.paymentchannel.Protos.Close result = buildPartial();
+      public org.litecoin.paymentchannel.Protos.Settlement build() {
+        org.litecoin.paymentchannel.Protos.Settlement result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.litecoin.paymentchannel.Protos.Close buildPartial() {
-        org.litecoin.paymentchannel.Protos.Close result = new org.litecoin.paymentchannel.Protos.Close(this);
+      public org.litecoin.paymentchannel.Protos.Settlement buildPartial() {
+        org.litecoin.paymentchannel.Protos.Settlement result = new org.litecoin.paymentchannel.Protos.Settlement(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -7016,16 +7505,16 @@ public final class Protos {
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.litecoin.paymentchannel.Protos.Close) {
-          return mergeFrom((org.litecoin.paymentchannel.Protos.Close)other);
+        if (other instanceof org.litecoin.paymentchannel.Protos.Settlement) {
+          return mergeFrom((org.litecoin.paymentchannel.Protos.Settlement)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.litecoin.paymentchannel.Protos.Close other) {
-        if (other == org.litecoin.paymentchannel.Protos.Close.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.litecoin.paymentchannel.Protos.Settlement other) {
+        if (other == org.litecoin.paymentchannel.Protos.Settlement.getDefaultInstance()) return this;
         if (other.hasTx()) {
           setTx(other.getTx());
         }
@@ -7045,11 +7534,11 @@ public final class Protos {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.litecoin.paymentchannel.Protos.Close parsedMessage = null;
+        org.litecoin.paymentchannel.Protos.Settlement parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.litecoin.paymentchannel.Protos.Close) e.getUnfinishedMessage();
+          parsedMessage = (org.litecoin.paymentchannel.Protos.Settlement) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -7066,7 +7555,7 @@ public final class Protos {
        * <code>required bytes tx = 3;</code>
        *
        * <pre>
-       * A copy of the fully signed final contract that closes the channel. The client can verify
+       * A copy of the fully signed final contract that settles the channel. The client can verify
        * the transaction is correct and then commit it to their wallet.
        * </pre>
        */
@@ -7077,7 +7566,7 @@ public final class Protos {
        * <code>required bytes tx = 3;</code>
        *
        * <pre>
-       * A copy of the fully signed final contract that closes the channel. The client can verify
+       * A copy of the fully signed final contract that settles the channel. The client can verify
        * the transaction is correct and then commit it to their wallet.
        * </pre>
        */
@@ -7088,7 +7577,7 @@ public final class Protos {
        * <code>required bytes tx = 3;</code>
        *
        * <pre>
-       * A copy of the fully signed final contract that closes the channel. The client can verify
+       * A copy of the fully signed final contract that settles the channel. The client can verify
        * the transaction is correct and then commit it to their wallet.
        * </pre>
        */
@@ -7105,7 +7594,7 @@ public final class Protos {
        * <code>required bytes tx = 3;</code>
        *
        * <pre>
-       * A copy of the fully signed final contract that closes the channel. The client can verify
+       * A copy of the fully signed final contract that settles the channel. The client can verify
        * the transaction is correct and then commit it to their wallet.
        * </pre>
        */
@@ -7116,15 +7605,15 @@ public final class Protos {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:paymentchannels.Close)
+      // @@protoc_insertion_point(builder_scope:paymentchannels.Settlement)
     }
 
     static {
-      defaultInstance = new Close(true);
+      defaultInstance = new Settlement(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:paymentchannels.Close)
+    // @@protoc_insertion_point(class_scope:paymentchannels.Settlement)
   }
 
   public interface ErrorOrBuilder
@@ -7166,6 +7655,24 @@ public final class Protos {
      */
     com.google.protobuf.ByteString
         getExplanationBytes();
+
+    // optional uint64 expected_value = 3;
+    /**
+     * <code>optional uint64 expected_value = 3;</code>
+     *
+     * <pre>
+     * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+     * </pre>
+     */
+    boolean hasExpectedValue();
+    /**
+     * <code>optional uint64 expected_value = 3;</code>
+     *
+     * <pre>
+     * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+     * </pre>
+     */
+    long getExpectedValue();
   }
   /**
    * Protobuf type {@code paymentchannels.Error}
@@ -7238,6 +7745,11 @@ public final class Protos {
             case 18: {
               bitField0_ |= 0x00000002;
               explanation_ = input.readBytes();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              expectedValue_ = input.readUInt64();
               break;
             }
           }
@@ -7334,9 +7846,17 @@ public final class Protos {
        */
       CHANNEL_VALUE_TOO_LARGE(5, 6),
       /**
-       * <code>OTHER = 7;</code>
+       * <code>MIN_PAYMENT_TOO_LARGE = 7;</code>
+       *
+       * <pre>
+       * too large for the primary
+       * </pre>
        */
-      OTHER(6, 7),
+      MIN_PAYMENT_TOO_LARGE(6, 7),
+      /**
+       * <code>OTHER = 8;</code>
+       */
+      OTHER(7, 8),
       ;
 
       /**
@@ -7389,9 +7909,17 @@ public final class Protos {
        */
       public static final int CHANNEL_VALUE_TOO_LARGE_VALUE = 6;
       /**
-       * <code>OTHER = 7;</code>
+       * <code>MIN_PAYMENT_TOO_LARGE = 7;</code>
+       *
+       * <pre>
+       * too large for the primary
+       * </pre>
        */
-      public static final int OTHER_VALUE = 7;
+      public static final int MIN_PAYMENT_TOO_LARGE_VALUE = 7;
+      /**
+       * <code>OTHER = 8;</code>
+       */
+      public static final int OTHER_VALUE = 8;
 
 
       public final int getNumber() { return value; }
@@ -7404,7 +7932,8 @@ public final class Protos {
           case 4: return BAD_TRANSACTION;
           case 5: return TIME_WINDOW_TOO_LARGE;
           case 6: return CHANNEL_VALUE_TOO_LARGE;
-          case 7: return OTHER;
+          case 7: return MIN_PAYMENT_TOO_LARGE;
+          case 8: return OTHER;
           default: return null;
         }
       }
@@ -7528,9 +8057,34 @@ public final class Protos {
       }
     }
 
+    // optional uint64 expected_value = 3;
+    public static final int EXPECTED_VALUE_FIELD_NUMBER = 3;
+    private long expectedValue_;
+    /**
+     * <code>optional uint64 expected_value = 3;</code>
+     *
+     * <pre>
+     * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+     * </pre>
+     */
+    public boolean hasExpectedValue() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional uint64 expected_value = 3;</code>
+     *
+     * <pre>
+     * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+     * </pre>
+     */
+    public long getExpectedValue() {
+      return expectedValue_;
+    }
+
     private void initFields() {
       code_ = org.litecoin.paymentchannel.Protos.Error.ErrorCode.OTHER;
       explanation_ = "";
+      expectedValue_ = 0L;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -7550,6 +8104,9 @@ public final class Protos {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, getExplanationBytes());
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeUInt64(3, expectedValue_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -7566,6 +8123,10 @@ public final class Protos {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, getExplanationBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(3, expectedValue_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -7693,6 +8254,8 @@ public final class Protos {
         bitField0_ = (bitField0_ & ~0x00000001);
         explanation_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
+        expectedValue_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -7729,6 +8292,10 @@ public final class Protos {
           to_bitField0_ |= 0x00000002;
         }
         result.explanation_ = explanation_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.expectedValue_ = expectedValue_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -7752,6 +8319,9 @@ public final class Protos {
           bitField0_ |= 0x00000002;
           explanation_ = other.explanation_;
           onChanged();
+        }
+        if (other.hasExpectedValue()) {
+          setExpectedValue(other.getExpectedValue());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -7914,6 +8484,55 @@ public final class Protos {
         return this;
       }
 
+      // optional uint64 expected_value = 3;
+      private long expectedValue_ ;
+      /**
+       * <code>optional uint64 expected_value = 3;</code>
+       *
+       * <pre>
+       * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+       * </pre>
+       */
+      public boolean hasExpectedValue() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional uint64 expected_value = 3;</code>
+       *
+       * <pre>
+       * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+       * </pre>
+       */
+      public long getExpectedValue() {
+        return expectedValue_;
+      }
+      /**
+       * <code>optional uint64 expected_value = 3;</code>
+       *
+       * <pre>
+       * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+       * </pre>
+       */
+      public Builder setExpectedValue(long value) {
+        bitField0_ |= 0x00000004;
+        expectedValue_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional uint64 expected_value = 3;</code>
+       *
+       * <pre>
+       * Can be set by the client when erroring to the server if a value was out of range. Can help with debugging.
+       * </pre>
+       */
+      public Builder clearExpectedValue() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        expectedValue_ = 0L;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:paymentchannels.Error)
     }
 
@@ -7966,10 +8585,10 @@ public final class Protos {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_paymentchannels_UpdatePayment_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_paymentchannels_Close_descriptor;
+    internal_static_paymentchannels_Settlement_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_paymentchannels_Close_fieldAccessorTable;
+      internal_static_paymentchannels_Settlement_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_paymentchannels_Error_descriptor;
   private static
@@ -7985,7 +8604,7 @@ public final class Protos {
   static {
     java.lang.String[] descriptorData = {
       "\n\024paymentchannel.proto\022\017paymentchannels\"" +
-      "\364\005\n\024TwoWayChannelMessage\022?\n\004type\030\001 \002(\01621" +
+      "\376\005\n\024TwoWayChannelMessage\022?\n\004type\030\001 \002(\01621" +
       ".paymentchannels.TwoWayChannelMessage.Me" +
       "ssageType\0226\n\016client_version\030\002 \001(\0132\036.paym" +
       "entchannels.ClientVersion\0226\n\016server_vers" +
@@ -7996,32 +8615,36 @@ public final class Protos {
       "\006 \001(\0132\035.paymentchannels.ReturnRefund\022:\n\020",
       "provide_contract\030\007 \001(\0132 .paymentchannels" +
       ".ProvideContract\0226\n\016update_payment\030\010 \001(\013" +
-      "2\036.paymentchannels.UpdatePayment\022%\n\005clos" +
-      "e\030\t \001(\0132\026.paymentchannels.Close\022%\n\005error" +
-      "\030\n \001(\0132\026.paymentchannels.Error\"\315\001\n\013Messa" +
-      "geType\022\022\n\016CLIENT_VERSION\020\001\022\022\n\016SERVER_VER" +
-      "SION\020\002\022\014\n\010INITIATE\020\003\022\022\n\016PROVIDE_REFUND\020\004" +
-      "\022\021\n\rRETURN_REFUND\020\005\022\024\n\020PROVIDE_CONTRACT\020" +
-      "\006\022\020\n\014CHANNEL_OPEN\020\007\022\022\n\016UPDATE_PAYMENT\020\010\022" +
-      "\017\n\013PAYMENT_ACK\020\013\022\t\n\005CLOSE\020\t\022\t\n\005ERROR\020\n\"X",
-      "\n\rClientVersion\022\r\n\005major\030\001 \002(\005\022\020\n\005minor\030" +
-      "\002 \001(\005:\0010\022&\n\036previous_channel_contract_ha" +
-      "sh\030\003 \001(\014\"0\n\rServerVersion\022\r\n\005major\030\001 \002(\005" +
-      "\022\020\n\005minor\030\002 \001(\005:\0010\"]\n\010Initiate\022\024\n\014multis" +
-      "ig_key\030\001 \002(\014\022!\n\031min_accepted_channel_siz" +
-      "e\030\002 \002(\004\022\030\n\020expire_time_secs\030\003 \002(\004\"1\n\rPro" +
-      "videRefund\022\024\n\014multisig_key\030\001 \002(\014\022\n\n\002tx\030\002" +
-      " \002(\014\"!\n\014ReturnRefund\022\021\n\tsignature\030\001 \002(\014\"" +
-      "\035\n\017ProvideContract\022\n\n\002tx\030\001 \002(\014\"?\n\rUpdate" +
-      "Payment\022\033\n\023client_change_value\030\001 \002(\004\022\021\n\t",
-      "signature\030\002 \002(\014\"\023\n\005Close\022\n\n\002tx\030\003 \002(\014\"\363\001\n" +
-      "\005Error\0225\n\004code\030\001 \001(\0162 .paymentchannels.E" +
-      "rror.ErrorCode:\005OTHER\022\023\n\013explanation\030\002 \001" +
-      "(\t\"\235\001\n\tErrorCode\022\013\n\007TIMEOUT\020\001\022\020\n\014SYNTAX_" +
-      "ERROR\020\002\022\031\n\025NO_ACCEPTABLE_VERSION\020\003\022\023\n\017BA" +
-      "D_TRANSACTION\020\004\022\031\n\025TIME_WINDOW_TOO_LARGE" +
-      "\020\005\022\033\n\027CHANNEL_VALUE_TOO_LARGE\020\006\022\t\n\005OTHER" +
-      "\020\007B$\n\032org.litecoin.paymentchannelB\006Protos"
+      "2\036.paymentchannels.UpdatePayment\022/\n\nsett" +
+      "lement\030\t \001(\0132\033.paymentchannels.Settlemen" +
+      "t\022%\n\005error\030\n \001(\0132\026.paymentchannels.Error" +
+      "\"\315\001\n\013MessageType\022\022\n\016CLIENT_VERSION\020\001\022\022\n\016" +
+      "SERVER_VERSION\020\002\022\014\n\010INITIATE\020\003\022\022\n\016PROVID" +
+      "E_REFUND\020\004\022\021\n\rRETURN_REFUND\020\005\022\024\n\020PROVIDE" +
+      "_CONTRACT\020\006\022\020\n\014CHANNEL_OPEN\020\007\022\022\n\016UPDATE_" +
+      "PAYMENT\020\010\022\017\n\013PAYMENT_ACK\020\013\022\t\n\005CLOSE\020\t\022\t\n",
+      "\005ERROR\020\n\"X\n\rClientVersion\022\r\n\005major\030\001 \002(\005" +
+      "\022\020\n\005minor\030\002 \001(\005:\0010\022&\n\036previous_channel_c" +
+      "ontract_hash\030\003 \001(\014\"0\n\rServerVersion\022\r\n\005m" +
+      "ajor\030\001 \002(\005\022\020\n\005minor\030\002 \001(\005:\0010\"r\n\010Initiate" +
+      "\022\024\n\014multisig_key\030\001 \002(\014\022!\n\031min_accepted_c" +
+      "hannel_size\030\002 \002(\004\022\030\n\020expire_time_secs\030\003 " +
+      "\002(\004\022\023\n\013min_payment\030\004 \002(\004\"1\n\rProvideRefun" +
+      "d\022\024\n\014multisig_key\030\001 \002(\014\022\n\n\002tx\030\002 \002(\014\"!\n\014R" +
+      "eturnRefund\022\021\n\tsignature\030\001 \002(\014\"V\n\017Provid" +
+      "eContract\022\n\n\002tx\030\001 \002(\014\0227\n\017initial_payment",
+      "\030\002 \002(\0132\036.paymentchannels.UpdatePayment\"?" +
+      "\n\rUpdatePayment\022\033\n\023client_change_value\030\001" +
+      " \002(\004\022\021\n\tsignature\030\002 \002(\014\"\030\n\nSettlement\022\n\n" +
+      "\002tx\030\003 \002(\014\"\246\002\n\005Error\0225\n\004code\030\001 \001(\0162 .paym" +
+      "entchannels.Error.ErrorCode:\005OTHER\022\023\n\013ex" +
+      "planation\030\002 \001(\t\022\026\n\016expected_value\030\003 \001(\004\"" +
+      "\270\001\n\tErrorCode\022\013\n\007TIMEOUT\020\001\022\020\n\014SYNTAX_ERR" +
+      "OR\020\002\022\031\n\025NO_ACCEPTABLE_VERSION\020\003\022\023\n\017BAD_T" +
+      "RANSACTION\020\004\022\031\n\025TIME_WINDOW_TOO_LARGE\020\005\022" +
+      "\033\n\027CHANNEL_VALUE_TOO_LARGE\020\006\022\031\n\025MIN_PAYM",
+      "ENT_TOO_LARGE\020\007\022\t\n\005OTHER\020\010B$\n\032org.bitcoi" +
+      "n.paymentchannelB\006Protos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -8033,7 +8656,7 @@ public final class Protos {
           internal_static_paymentchannels_TwoWayChannelMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_paymentchannels_TwoWayChannelMessage_descriptor,
-              new java.lang.String[] { "Type", "ClientVersion", "ServerVersion", "Initiate", "ProvideRefund", "ReturnRefund", "ProvideContract", "UpdatePayment", "Close", "Error", });
+              new java.lang.String[] { "Type", "ClientVersion", "ServerVersion", "Initiate", "ProvideRefund", "ReturnRefund", "ProvideContract", "UpdatePayment", "Settlement", "Error", });
           internal_static_paymentchannels_ClientVersion_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_paymentchannels_ClientVersion_fieldAccessorTable = new
@@ -8051,7 +8674,7 @@ public final class Protos {
           internal_static_paymentchannels_Initiate_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_paymentchannels_Initiate_descriptor,
-              new java.lang.String[] { "MultisigKey", "MinAcceptedChannelSize", "ExpireTimeSecs", });
+              new java.lang.String[] { "MultisigKey", "MinAcceptedChannelSize", "ExpireTimeSecs", "MinPayment", });
           internal_static_paymentchannels_ProvideRefund_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_paymentchannels_ProvideRefund_fieldAccessorTable = new
@@ -8069,25 +8692,25 @@ public final class Protos {
           internal_static_paymentchannels_ProvideContract_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_paymentchannels_ProvideContract_descriptor,
-              new java.lang.String[] { "Tx", });
+              new java.lang.String[] { "Tx", "InitialPayment", });
           internal_static_paymentchannels_UpdatePayment_descriptor =
             getDescriptor().getMessageTypes().get(7);
           internal_static_paymentchannels_UpdatePayment_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_paymentchannels_UpdatePayment_descriptor,
               new java.lang.String[] { "ClientChangeValue", "Signature", });
-          internal_static_paymentchannels_Close_descriptor =
+          internal_static_paymentchannels_Settlement_descriptor =
             getDescriptor().getMessageTypes().get(8);
-          internal_static_paymentchannels_Close_fieldAccessorTable = new
+          internal_static_paymentchannels_Settlement_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_paymentchannels_Close_descriptor,
+              internal_static_paymentchannels_Settlement_descriptor,
               new java.lang.String[] { "Tx", });
           internal_static_paymentchannels_Error_descriptor =
             getDescriptor().getMessageTypes().get(9);
           internal_static_paymentchannels_Error_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_paymentchannels_Error_descriptor,
-              new java.lang.String[] { "Code", "Explanation", });
+              new java.lang.String[] { "Code", "Explanation", "ExpectedValue", });
           return null;
         }
       };

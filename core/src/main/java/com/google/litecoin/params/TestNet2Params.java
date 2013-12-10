@@ -32,10 +32,11 @@ public class TestNet2Params extends NetworkParameters {
         packetMagic = 0xfcc1b7dc;
         port = 19333;
         addressHeader = 111;
+        p2shHeader = 196;
+        acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         proofOfWorkLimit = Utils.decodeCompactBits(0x1d0fffffL);
-        acceptableAddressCodes = new int[] { 111 };
         dumpedPrivateKeyHeader = 239;
         genesisBlock.setTime(1320884152L);
         genesisBlock.setDifficultyTarget(0x1d07fff8L);

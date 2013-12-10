@@ -17,6 +17,7 @@
 package com.google.litecoin.protocols.channels;
 
 import com.google.litecoin.core.ECKey;
+import com.google.litecoin.core.InsufficientMoneyException;
 import com.google.litecoin.core.Sha256Hash;
 import com.google.litecoin.core.Wallet;
 import com.google.litecoin.protocols.niowrapper.NioClient;
@@ -76,7 +77,7 @@ public class PaymentChannelClientConnection {
             }
 
             @Override
-            public void channelOpen() {
+            public void channelOpen(boolean wasInitiated) {
                 wireParser.setSocketTimeout(0);
                 // Inform the API user that we're done and ready to roll.
                 channelOpenFuture.set(PaymentChannelClientConnection.this);
@@ -89,7 +90,7 @@ public class PaymentChannelClientConnection {
             public void messageReceived(ProtobufParser handler, Protos.TwoWayChannelMessage msg) {
                 try {
                     channelClient.receiveMessage(msg);
-                } catch (ValueOutOfRangeException e) {
+                } catch (InsufficientMoneyException e) {
                     // We should only get this exception during INITIATE, so channelOpen wasn't called yet.
                     channelOpenFuture.setException(e);
                 }
@@ -149,10 +150,10 @@ public class PaymentChannelClientConnection {
     }
 
     /**
-     * Closes the connection, notifying the server it should close the channel by broadcasting the most recent payment
+     * Closes the connection, notifying the server it should settle the channel by broadcasting the most recent payment
      * transaction.
      */
-    public void close() {
+    public void settle() {
         // Shutdown is a little complicated.
         //
         // This call will cause the CLOSE message to be written to the wire, and then the destroyConnection() method that
@@ -162,17 +163,17 @@ public class PaymentChannelClientConnection {
         // ProtobufParser.connectionClosed which invokes the connectionClosed method we defined above which in turn
         // then configures the open-future correctly and closes the state object. Phew!
         try {
-            channelClient.close();
+            channelClient.settle();
         } catch (IllegalStateException e) {
             // Already closed...oh well
         }
     }
 
     /**
-     * Disconnects the network connection but doesn't request the server to close the channel first (literally just
+     * Disconnects the network connection but doesn't request the server to settle the channel first (literally just
      * unplugs the network socket and marks the stored channel state as inactive).
      */
-    public void disconnectWithoutChannelClose() {
+    public void disconnectWithoutSettlement() {
         wireParser.closeConnection();
     }
 }

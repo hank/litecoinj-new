@@ -16,10 +16,12 @@
 
 package com.google.litecoin.jni;
 
+
 import com.google.litecoin.core.ECKey;
 import com.google.litecoin.core.Transaction;
 import com.google.litecoin.core.Wallet;
 import com.google.litecoin.core.WalletEventListener;
+import com.google.litecoin.script.Script;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -49,4 +51,7 @@ public class NativeWalletEventListener implements WalletEventListener {
 
     @Override
     public native void onKeysAdded(Wallet wallet, List<ECKey> keys);
+
+    @Override
+    public native void onScriptsAdded(Wallet wallet, List<Script> scripts);
 }

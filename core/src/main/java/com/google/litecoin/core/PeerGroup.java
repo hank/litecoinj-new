@@ -20,8 +20,10 @@ package com.google.litecoin.core;
 import com.google.litecoin.core.Peer.PeerHandler;
 import com.google.litecoin.discovery.PeerDiscovery;
 import com.google.litecoin.discovery.PeerDiscoveryException;
+import com.google.litecoin.script.Script;
 import com.google.litecoin.utils.ListenerRegistration;
 import com.google.litecoin.utils.Threading;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.*;
@@ -131,6 +133,7 @@ public class PeerGroup extends AbstractIdleService implements TransactionBroadca
         private void onChanged() {
             recalculateFastCatchupAndFilter();
         }
+        @Override public void onScriptsAdded(Wallet wallet, List<Script> scripts) { onChanged(); }
         @Override public void onKeysAdded(Wallet wallet, List<ECKey> keys) { onChanged(); }
         @Override public void onCoinsReceived(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance) { onChanged(); }
         @Override public void onCoinsSent(Wallet wallet, Transaction tx, BigInteger prevBalance, BigInteger newBalance) { onChanged(); }
@@ -679,9 +682,11 @@ public class PeerGroup extends AbstractIdleService implements TransactionBroadca
                 return;
             long earliestKeyTimeSecs = Long.MAX_VALUE;
             int elements = 0;
+            boolean requiresUpdateAll = false;
             for (PeerFilterProvider p : peerFilterProviders) {
                 earliestKeyTimeSecs = Math.min(earliestKeyTimeSecs, p.getEarliestKeyCreationTime());
                 elements += p.getBloomFilterElementCount();
+                requiresUpdateAll = requiresUpdateAll || p.isRequiringUpdateAllBloomFilter();
             }
 
             if (elements > 0) {
@@ -690,7 +695,9 @@ public class PeerGroup extends AbstractIdleService implements TransactionBroadca
                 // The constant 100 here is somewhat arbitrary, but makes sense for small to medium wallets -
                 // it will likely mean we never need to create a filter with different parameters.
                 lastBloomFilterElementCount = elements > lastBloomFilterElementCount ? elements + 100 : lastBloomFilterElementCount;
-                BloomFilter filter = new BloomFilter(lastBloomFilterElementCount, bloomFilterFPRate, bloomFilterTweak);
+                BloomFilter.BloomUpdate bloomFlags =
+                        requiresUpdateAll ? BloomFilter.BloomUpdate.UPDATE_ALL : BloomFilter.BloomUpdate.UPDATE_P2PUBKEY_ONLY;
+                BloomFilter filter = new BloomFilter(lastBloomFilterElementCount, bloomFilterFPRate, bloomFilterTweak, bloomFlags);
                 for (PeerFilterProvider p : peerFilterProviders)
                     filter.merge(p.getBloomFilter(lastBloomFilterElementCount, bloomFilterFPRate, bloomFilterTweak));
 /*          Don't set bloom - new clients will block you.

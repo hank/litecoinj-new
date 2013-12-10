@@ -35,15 +35,17 @@ public class MainNetParams extends NetworkParameters {
         interval = INTERVAL;
         targetTimespan = TARGET_TIMESPAN;
         proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);
-        acceptableAddressCodes = new int[] { 48 };
-        dumpedPrivateKeyHeader = 128;
         addressHeader = 48;
+        p2shHeader = 5;
+        acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
+        dumpedPrivateKeyHeader = 128;
         port = 9333;
         packetMagic = 0xfbc0b6db;
         genesisBlock.setDifficultyTarget(0x1e0ffff0L);
         genesisBlock.setTime(1317972665L);
         genesisBlock.setNonce(2084524493L);
         genesisBlock.setMerkleRoot(new Sha256Hash("97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9"));
+
         id = ID_MAINNET;
         subsidyDecreaseBlockCount = 840000;
         spendableCoinbaseDepth = 100;

@@ -21,6 +21,8 @@ import com.google.litecoin.core.TransactionConfidence.ConfidenceType;
 import com.google.litecoin.crypto.EncryptedPrivateKey;
 import com.google.litecoin.crypto.KeyCrypter;
 import com.google.litecoin.crypto.KeyCrypterScrypt;
+import com.google.litecoin.script.Script;
+import com.google.common.collect.Lists;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.TextFormat;
 import org.bitcoinj.wallet.Protos;
@@ -36,6 +38,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -83,7 +86,7 @@ public class WalletProtobufSerializer {
 
     /**
      * Formats the given wallet (transactions and keys) to the given output stream in protocol buffer format.<p>
-     *     
+     *
      * Equivalent to <tt>walletToProto(wallet).writeTo(output);</tt>
      */
     public void writeWallet(Wallet wallet, OutputStream output) throws IOException {
@@ -154,12 +157,24 @@ public class WalletProtobufSerializer {
             walletBuilder.addKey(keyBuilder);
         }
 
+        for (Script script : wallet.getWatchedScripts()) {
+            Protos.Script protoScript =
+                    Protos.Script.newBuilder()
+                            .setProgram(ByteString.copyFrom(script.getProgram()))
+                            .setCreationTimestamp(script.getCreationTimeSeconds() * 1000)
+                            .build();
+
+            walletBuilder.addWatchedScript(protoScript);
+        }
+
         // Populate the lastSeenBlockHash field.
         Sha256Hash lastSeenBlockHash = wallet.getLastBlockSeenHash();
         if (lastSeenBlockHash != null) {
             walletBuilder.setLastSeenBlockHash(hashToByteString(lastSeenBlockHash));
             walletBuilder.setLastSeenBlockHeight(wallet.getLastBlockSeenHeight());
         }
+        if (wallet.getLastBlockSeenTimeSecs() > 0)
+            walletBuilder.setLastSeenBlockTimeSecs(wallet.getLastBlockSeenTimeSecs());
 
         // Populate the scrypt parameters.
         KeyCrypter keyCrypter = wallet.getKeyCrypter();
@@ -401,6 +416,20 @@ public class WalletProtobufSerializer {
             wallet.addKey(ecKey);
         }
 
+        List<Script> scripts = Lists.newArrayList();
+        for (Protos.Script protoScript : walletProto.getWatchedScriptList()) {
+            try {
+                Script script =
+                        new Script(protoScript.getProgram().toByteArray(),
+                                protoScript.getCreationTimestamp() / 1000);
+                scripts.add(script);
+            } catch (ScriptException e) {
+                throw new UnreadableWalletException("Unparseable script in wallet");
+            }
+        }
+
+        wallet.addWatchedScripts(scripts);
+
         // Read all transactions and insert into the txMap.
         for (Protos.Transaction txProto : walletProto.getTransactionList()) {
             readTransaction(txProto, wallet.getParams());
@@ -423,6 +452,8 @@ public class WalletProtobufSerializer {
         } else {
             wallet.setLastBlockSeenHeight(walletProto.getLastSeenBlockHeight());
         }
+        // Will default to zero if not present.
+        wallet.setLastBlockSeenTimeSecs(walletProto.getLastSeenBlockTimeSecs());
 
         if (walletProto.hasKeyRotationTime()) {
             wallet.setKeyRotationTime(new Date(walletProto.getKeyRotationTime() * 1000));

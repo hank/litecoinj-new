@@ -1,5 +1,22 @@
+/*
+ * Copyright 2013 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.litecoin.protocols.channels;
 
+import com.google.litecoin.core.InsufficientMoneyException;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.litecoin.paymentchannel.Protos;
 
@@ -15,7 +32,7 @@ public interface IPaymentChannelClient {
      * Called when a message is received from the server. Processes the given message and generates events based on its
      * content.
      */
-    void receiveMessage(Protos.TwoWayChannelMessage msg) throws ValueOutOfRangeException;
+    void receiveMessage(Protos.TwoWayChannelMessage msg) throws InsufficientMoneyException;
 
     /**
      * <p>Called when the connection to the server terminates.</p>
@@ -25,22 +42,21 @@ public interface IPaymentChannelClient {
      *
      * <p>Note that this <b>MUST</b> still be called even after either
      * {@link PaymentChannelClient.ClientConnection#destroyConnection(com.google.litecoin.protocols.channels.PaymentChannelCloseException.CloseReason)} or
-     * {@link IPaymentChannelClient#close()} is called to actually handle the connection close logic.</p>
+     * {@link IPaymentChannelClient#settle()} is called, to actually handle the connection close logic.</p>
      */
     void connectionClosed();
 
-    // TODO: Rename this to settle.
     /**
      * <p>Settles the channel, notifying the server it can broadcast the most recent payment transaction.</p>
      *
      * <p>Note that this only generates a CLOSE message for the server and calls
      * {@link PaymentChannelClient.ClientConnection#destroyConnection(com.google.litecoin.protocols.channels.PaymentChannelCloseException.CloseReason)}
-     * to close the connection, it does not actually handle connection close logic, and
+     * to settle the connection, it does not actually handle connection close logic, and
      * {@link PaymentChannelClient#connectionClosed()} must still be called after the connection fully settles.</p>
      *
      * @throws IllegalStateException If the connection is not currently open (ie the CLOSE message cannot be sent)
      */
-    void close() throws IllegalStateException;
+    void settle() throws IllegalStateException;
 
     /**
      * <p>Called to indicate the connection has been opened and messages can now be generated for the server.</p>
@@ -101,12 +117,15 @@ public interface IPaymentChannelClient {
         void destroyConnection(PaymentChannelCloseException.CloseReason reason);
 
         /**
-         * <p>Indicates the channel has been successfully opened and
-         * {@link com.google.litecoin.protocols.channels.PaymentChannelClient#incrementPayment(java.math.BigInteger)} may be called at will.</p>
+         * {@link com.google.litecoin.protocols.channels.PaymentChannelClient#incrementPayment(java.math.BigInteger)}
+         * may be called at will.</p>
          *
-         * <p>Called while holding a lock on the {@link com.google.litecoin.protocols.channels.PaymentChannelClient} object - be careful about reentrancy</p>
+         * <p>Called while holding a lock on the {@link com.google.litecoin.protocols.channels.PaymentChannelClient}
+         * object - be careful about reentrancy</p>
+         *
+         * @param wasInitiated If true, the channel is newly opened. If false, it was resumed.
          */
-        void channelOpen();
+        void channelOpen(boolean wasInitiated);
     }
 
     /**
