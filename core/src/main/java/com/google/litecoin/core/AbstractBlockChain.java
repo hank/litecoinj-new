@@ -16,6 +16,7 @@
 
 package com.google.litecoin.core;
 
+import com.google.litecoin.params.MainNetParams;
 import com.google.litecoin.store.BlockStore;
 import com.google.litecoin.store.BlockStoreException;
 import com.google.litecoin.utils.ListenerRegistration;
@@ -782,15 +783,10 @@ public abstract class AbstractBlockChain {
         
         // Is this supposed to be a difficulty transition point?
         if ((storedPrev.getHeight() + 1) % params.getInterval() != 0) {
-
-            // TODO: Refactor this hack after 0.5 is released and we stop supporting deserialization compatibility.
-            // This should be a method of the NetworkParameters, which should in turn be using singletons and a subclass
-            // for each network type. Then each network can define its own difficulty transition rules.
-            if (params.getId().equals(NetworkParameters.ID_TESTNET) && nextBlock.getTime().after(testnetDiffDate)) {
+            if (params.getClass() != MainNetParams.class && nextBlock.getTime().after(testnetDiffDate)) {
                 checkTestnetDifficulty(storedPrev, prev, nextBlock);
                 return;
             }
-
             // No ... so check the difficulty didn't actually change.
             if (nextBlock.getDifficultyTarget() != prev.getDifficultyTarget())
                 throw new VerificationException("Unexpected change in difficulty at height " + storedPrev.getHeight() +
@@ -803,7 +799,12 @@ public abstract class AbstractBlockChain {
         // two weeks after the initial block chain download.
         long now = System.currentTimeMillis();
         StoredBlock cursor = blockStore.get(prev.getHash());
-        for (int i = 0; i < params.getInterval() - 1; i++) {
+
+        int goBack = params.interval - 1;
+        if (cursor.getHeight()+1 != params.interval)
+            goBack = params.interval;
+
+        for (int i = 0; i < goBack; i++) {
             if (cursor == null) {
                 // This should never happen. If it does, it means we are following an incorrect or busted chain.
                 throw new VerificationException(
@@ -842,10 +843,15 @@ public abstract class AbstractBlockChain {
         // The calculated difficulty is to a higher precision than received, so reduce here.
         BigInteger mask = BigInteger.valueOf(0xFFFFFFL).shiftLeft(accuracyBytes * 8);
         newDifficulty = newDifficulty.and(mask);
+        log.info("New Calculated Difficulty: " + newDifficulty.toString());
+        log.info("Received Difficulty: " + receivedDifficulty.toString());
 
-        if (newDifficulty.compareTo(receivedDifficulty) != 0)
+        if (newDifficulty.compareTo(receivedDifficulty) != 0) {
+            log.info("\"Network provided difficulty bits do not match what was calculated: " +
+                    receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
             throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
                     receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
+        }
     }
 
     private void checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
