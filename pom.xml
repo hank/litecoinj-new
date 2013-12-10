@@ -4,7 +4,7 @@
 
   <groupId>com.google</groupId>
   <artifactId>litecoinj-parent</artifactId>
-  <version>0.111</version>
+  <version>0.11.1</version>
   <packaging>pom</packaging>
 
   <modules>
