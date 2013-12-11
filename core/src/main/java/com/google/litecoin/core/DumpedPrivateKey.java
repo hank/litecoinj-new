@@ -35,7 +35,7 @@ public class DumpedPrivateKey extends VersionedChecksummedBytes {
         //super(params.getDumpedPrivateKeyHeader(), encode(keyBytes, compressed));
         // Fixing private key export
         // Thanks to d4n13 for this!
-        super(params.dumpedPrivateKeyHeader + params.addressHeader, encode(keyBytes, compressed));
+        super(params.getDumpedPrivateKeyHeader() + params.getAddressHeader(), encode(keyBytes, compressed));
         this.compressed = compressed;
     }
 
@@ -61,9 +61,9 @@ public class DumpedPrivateKey extends VersionedChecksummedBytes {
      */
     public DumpedPrivateKey(NetworkParameters params, String encoded) throws AddressFormatException {
         super(encoded);
-        if (params != null && version != params.getDumpedPrivateKeyHeader())
+        if (params != null && version != (params.getDumpedPrivateKeyHeader() + params.getAddressHeader()))
             throw new AddressFormatException("Mismatched version number, trying to cross networks? " + version +
-                    " vs " + params.getDumpedPrivateKeyHeader());
+                    " vs " + (params.getDumpedPrivateKeyHeader() + params.getAddressHeader()));
         if (bytes.length == 33 && bytes[32] == 1) {
             compressed = true;
             bytes = Arrays.copyOf(bytes, 32);  // Chop off the additional marker byte.

@@ -40,13 +40,13 @@ public class BuildCheckpoints {
         long now = new Date().getTime() / 1000;
         peerGroup.setFastCatchupTimeSecs(now);
 
-        final long oneMonthAgo = now - (86400 * 30);
+        final long oneWeekAgo = now - (86400 * 7);
 
         chain.addListener(new AbstractBlockChainListener() {
             @Override
             public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
                 int height = block.getHeight();
-                if (height % params.getInterval() == 0 && block.getHeader().getTimeSeconds() <= oneMonthAgo) {
+                if (height % params.getInterval() == 0 && block.getHeader().getTimeSeconds() <= oneWeekAgo) {
                     System.out.println(String.format("Checkpointing block %s at height %d",
                             block.getHeader().getHash(), block.getHeight()));
                     checkpoints.put(height, block);
@@ -85,10 +85,10 @@ public class BuildCheckpoints {
         store.close();
 
         // Sanity check the created file.
-        CheckpointManager manager = new CheckpointManager(params, new FileInputStream("checkpoints"));
+        CheckpointManager manager = new CheckpointManager(params, new FileInputStream("litecoin-checkpoints"));
         checkState(manager.numCheckpoints() == checkpoints.size());
         StoredBlock test = manager.getCheckpointBefore(1348310800);  // Just after block 200,000
         checkState(test.getHeight() == 199584);
-        checkState(test.getHeader().getHashAsString().equals("000000000000002e00a243fe9aa49c78f573091d17372c2ae0ae5e0f24f55b52"));
+        checkState(test.getHeader().getHashAsString().equals("49b13ca1eb4a55ced4e99e38469db12b74428c19fd2fb9fa0c262e5839eccf6a"));
     }
 }
